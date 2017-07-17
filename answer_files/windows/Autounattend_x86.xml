@@ -36,8 +36,6 @@
                     <!-- Do not uncomment the Key element if you are using trial ISOs -->
                     <!-- You must uncomment the Key element (and optionally insert your own key) if you are using retail or volume license ISOs -->
                     <Key>W269N-WFGWX-YVC9B-4J6C9-T83GX</Key>
-                    <!--<Key>YC6KT-GKW9T-YTKYR-T4X34-R7VHC</Key>-->
-
                     <WillShowUI>Never</WillShowUI>
                 </ProductKey>
             </UserData>
@@ -127,12 +125,6 @@
                     <Order>1</Order>
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
-                <!--<SynchronousCommand wcm:action="add">-->
-                    <!--<CommandLine>C:\Windows\SysWOW64\cmd.exe /c powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"</CommandLine>-->
-                    <!--<Description>Set Execution Policy 32 Bit</Description>-->
-                    <!--<Order>2</Order>-->
-                    <!--<RequiresUserInput>true</RequiresUserInput>-->
-                <!--</SynchronousCommand>-->
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>cmd.exe /c winrm quickconfig -q</CommandLine>
                     <Description>winrm quickconfig -q</Description>
@@ -311,7 +303,7 @@
                 <HelpCustomized>false</HelpCustomized>
             </OEMInformation>
             <!-- Rename computer here. -->
-            <ComputerName>Win10x64</ComputerName>
+            <ComputerName>WindowsX86</ComputerName>
             <TimeZone>Pacific Standard Time</TimeZone>
             <RegisteredOwner/>
         </component>

@@ -36,8 +36,6 @@
                     <!-- Do not uncomment the Key element if you are using trial ISOs -->
                     <!-- You must uncomment the Key element (and optionally insert your own key) if you are using retail or volume license ISOs -->
                     <Key>W269N-WFGWX-YVC9B-4J6C9-T83GX</Key>
-                    <!--<Key>YC6KT-GKW9T-YTKYR-T4X34-R7VHC</Key>-->
-                    
                     <WillShowUI>Never</WillShowUI>
                 </ProductKey>
             </UserData>
@@ -310,8 +308,7 @@
             <OEMInformation>
                 <HelpCustomized>false</HelpCustomized>
             </OEMInformation>
-            <!-- Rename computer here. -->
-            <ComputerName>Win10x64</ComputerName>
+            <ComputerName>WindowsX64</ComputerName>
             <TimeZone>Pacific Standard Time</TimeZone>
             <RegisteredOwner/>
         </component>
