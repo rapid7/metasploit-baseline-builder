@@ -12,7 +12,7 @@
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "2h",
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "windows9-64",
+      "guest_os_type": "{{user `guest_os_type`}}",
       "tools_upload_flavor": "windows",
       "disk_size": 61440,
       "floppy_files": [
@@ -35,7 +35,7 @@
         "./resources/certs/thawte_primary_root.cer",
         "./resources/certs/utn-userfirst.cer"
       ],
-      "vm_name": "APT_Win10x64_1607",
+      "vm_name": "{{user `vm_name`}}",
       "vmx_data": {
         "cpuid.coresPerSocket": "2",
         "memsize": "4096",
@@ -55,9 +55,9 @@
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "2h",
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "Windows10_64",
+      "guest_os_type": "{{user `guest_os_type`}}",
       "disk_size": 61440,
-      "vm_name": "APT_Win10x64_1607",
+      "vm_name": "{{user `vm_name`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
         "./scripts/configs/microsoft-updates.bat",
@@ -159,8 +159,7 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/chocolatey_installs/vcredist2008.bat",
-        "scripts/installs/install_ruby.bat",
-        "scripts/installs/install_devkit.bat"
+        "scripts/installs/install_ruby.bat"
         ]
     },
     {
@@ -180,14 +179,8 @@
     {
       "type": "vagrant",
       "keep_input_artifact": false,
-      "output": "windows_10_x64_1607_{{.Provider}}.box",
-      "vagrantfile_template": "vagrantfile-windows_10_x64_1607.template"
+      "output": "{{user `output`}}",
+      "vagrantfile_template": "{{user `vagrantfile_template`}}"
     }
-  ],
-  "variables": {
-    "iso_url": "./iso/en_windows_10_multiple_editions_version_1607_updated_jan_2017_x64_dvd_9714399.iso",
-    "iso_checksum_type": "md5",
-    "iso_checksum": "2d738dcde0fadec9dd687363bc9c98e8",
-    "autounattend": "./answer_files/windows/10/Autounattend.xml"
-  }
+  ]
 }

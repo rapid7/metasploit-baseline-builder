@@ -1,7 +1,15 @@
-if not exist "C:\Windows\Temp\7z920-x64.msi" (
-    powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z920-x64.msi', 'C:\Windows\Temp\7z920-x64.msi')" <NUL
+reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
+
+if %OS%==32BIT (
+    if not exist "C:\Windows\Temp\7z920.msi" (
+        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z920.msi', 'C:\Windows\Temp\7z920.msi')" <NUL
+    )
 )
-msiexec /qb /i C:\Windows\Temp\7z920-x64.msi
+if %OS%==64BIT echo This is a 64bit operating system
+    if not exist "C:\Windows\Temp\7z920.msi" (
+        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z920-x64.msi', 'C:\Windows\Temp\7z920.msi')" <NUL
+    )
+msiexec /qb /i C:\Windows\Temp\7z920.msi
 
 if "%PACKER_BUILDER_TYPE%" equ "vmware-iso" goto :vmware
 if "%PACKER_BUILDER_TYPE%" equ "virtualbox-iso" goto :virtualbox
@@ -47,4 +55,4 @@ if exist "C:\Users\vagrant\prl-tools-win.iso" (
 )
 
 :done
-msiexec /qb /x C:\Windows\Temp\7z920-x64.msi
+msiexec /qb /x C:\Windows\Temp\7z920.msi
