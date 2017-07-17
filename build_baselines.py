@@ -1,6 +1,7 @@
 import packer
 import sys
 import re
+import json
 from xml.etree import ElementTree
 
 
@@ -171,35 +172,6 @@ def build_base(iso, md5):
 
     return p
 
-iso_map = {
-    "en_windows_10_multiple_editions_version_1511_updated_apr_2016_x64_dvd_8705583.iso": "3ca03a2c59ae5b58ca965a345d4f2ae1",
-    "en_windows_10_multiple_editions_version_1511_updated_apr_2016_x86_dvd_8735185.iso": "91565f54dc7a4e1df8a5f2b913d869b1",
-
-    "en_windows_10_multiple_editions_version_1607_updated_jan_2017_x64_dvd_9714399.iso": "2d738dcde0fadec9dd687363bc9c98e8",
-    "en_windows_10_multiple_editions_version_1607_updated_jan_2017_x86_dvd_9714393.iso": "f17f69a8fb6df79d83939811ac38dfee",
-
-    "en_windows_10_multiple_editions_x64_dvd_6846432.iso": "23e397a21a9e01f141c64b7e1260314a",
-
-    "en_windows_7_professional_with_sp1_x64_dvd_u_676939.iso": "ed15956fe33c13642a6d2cb2c7aa9749",
-    "en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso": "0bff99c8310ba12a9136e3d23606f3d4",
-    "en_windows_7_professional_x64_dvd_x15-65805.iso": "7b7af5fe3a01e9fd76de4dacb45a796b",
-    "en_windows_7_professional_x86_dvd_x15-65804.iso": "d8f675aaeb48057452666b0cd686d7f5",
-    "en_windows_8.1_with_update_x64_dvd_6051480.iso": "e0d4594e56c0545d379340e0db9519a5",
-    "en_windows_8.1_with_update_x86_dvd_6051550.iso": "46ce6553a0e0abc264b77c1fc59dfb29",
-    "en_windows_8_1_x64_dvd_2707217.iso": "f104b78019e86e74b149ae5e510f7be9",
-    "en_windows_8_1_x86_dvd_2707392.iso": "7dd36fea0d004acfedbdb3a5521ef5ff",
-    "en_windows_8_x64_dvd_915440.iso": "0e8f2199fae18fe510c23426e68f675a",
-    "en_windows_8_x86_dvd_915417.iso": "4252407333706df89a0c654924dd3f06",
-
-    "en_windows_server_2008_r2_with_sp1_x64_dvd_617601.iso": "8dcde01d0da526100869e2457aafb7ca",
-    "en_windows_server_2008_r2_x64_dvd_x15-50365.iso": "0ffbae83327f0ad8c2ab4d5dfa754c09",
-
-    "en_windows_server_2012_r2_with_update_x64_dvd_6052708.iso": "78bff6565f178ed08ab534397fe44845",
-    "en_windows_server_2012_r2_x64_dvd_2707946.iso": "0e7c09aab20dec3cd7eab236dab90e78",
-    "en_windows_server_2012_x64_dvd_915478.iso": "da91135483e24689bfdaf05d40301506",
-    "en_windows_server_2016_x64_dvd_9718492.iso": "e02d2e482b0f3dab915435e9040c13b4",
-}
-
 not_working = {
     # "en_win_srv_2003_r2_standard_cd2.iso": "8985b1c1aac829f0d46d6aae088ecd67",
     # "en_win_srv_2003_r2_standard_with_sp2_cd1_x13-04790.iso": "7c2e96e050d14def056e62d806da79e1",
@@ -208,12 +180,6 @@ not_working = {
     # "en_win_srv_2003_r2_standard_x64_cd2.iso": "917a53630b81f7e3364e3c651118f319",
     # "en_win_srv_2003_r2_standard_x64_with_sp2_cd1_x13-05757.iso": "384f54fbd0f3524d4cc262f5892de230",
     # "en_win_srv_2003_r2_standard_x64_with_sp2_cd2_x13-68587.iso": "f0dc235b52daa9a36de90c93703c466d",
-
-    # "en_windows_10_multiple_editions_version_1511_updated_feb_2016_x64_dvd_8379634.iso": "a4fde74732557d75ffc5354d0271832e",
-
-    # "en_windows_10_multiple_editions_version_1703_updated_march_2017_x64_dvd_10189288.iso": "effccfda8a8dcf0b91bb3878702ae2d8",
-    # "en_windows_10_multiple_editions_version_1703_updated_march_2017_x86_dvd_10188977.iso": "6c8bd404dd95a286b3b3ef3a90e2cb34",
-
 
     # "en_windows_server_2003_standard.iso": "332aee5cf2ab3000de1c6bd0ff4e25a1",
     # "en_windows_server_2003_standard_x64.iso": "d688d6ac0986a32d45b26e437a4259d2",
@@ -229,7 +195,13 @@ not_working = {
     # "en_windows_xp_professional_x64.iso": "d089dd4e7529219186e355e0306e94b0",
     # "en_winxp_pro_with_sp2.iso": "5cc832a862c4075cf6bea6c6f0f69725",
     # "en_winxp_pro_x86_build2600_iso": "91b6f82efda6b4a8b937867f20f5011b"
+
+    # working but not currently built due to newer image for same build version
+    # "en_windows_10_multiple_editions_version_1511_updated_feb_2016_x64_dvd_8379634.iso": "a4fde74732557d75ffc5354d0271832e",
 }
+
+with open("iso_list.json", 'r') as iso_config:
+    iso_map = json.load(iso_config)
 
 for file_name in iso_map:
     build_base(file_name, iso_map[file_name])
