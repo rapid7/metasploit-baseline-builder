@@ -165,12 +165,16 @@ def build_base(iso, md5):
             for builder in packer_config['builders']:
                 if builder['type'] == "vmware-iso":
                     builder.update({
-                    "remote_type": "esx5",
-                    "remote_host": "{{user `esxi_host`}}",
-                    "remote_datastore": "{{user `esxi_datastore`}}",
-                    "remote_username": "{{user `esxi_username`}}",
-                    "remote_password": "{{user `esxi_password`}}",
-                    "keep_registered": True,
+                        "remote_type": "esx5",
+                        "remote_host": "{{user `esxi_host`}}",
+                        "remote_datastore": "{{user `esxi_datastore`}}",
+                        "remote_username": "{{user `esxi_username`}}",
+                        "remote_password": "{{user `esxi_password`}}",
+                        "keep_registered": True,
+                        "vnc_port_min": "5900",
+                        "vnc_port_max": "5911",
+                        "vnc_bind_address": "0.0.0.0",
+                        "vnc_disable_password": True,
                     })
                     builder['vmx_data'].update({
                       "ethernet0.networkName": "{{user `esxi_network`}}"
