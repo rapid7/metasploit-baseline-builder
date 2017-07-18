@@ -162,7 +162,7 @@ def build_base(iso, md5):
 
         with open(packerfile) as packer_source:
             packer_config = json.load(packer_source)
-            with packer_config['builders'] as builder:
+            for builder in packer_config['builders']:
                 if builder['type'] == "vmware-iso":
                     builder.update({
                     "remote_type": "esx5",
@@ -171,11 +171,10 @@ def build_base(iso, md5):
                     "remote_username": "{{user `esxi_username`}}",
                     "remote_password": "{{user `esxi_password`}}",
                     "keep_registered": True,
-
-                    "vmx_data": {
+                    })
+                    builder['vmx_data'].update({
                       "ethernet0.networkName": "{{user `esxi_network`}}"
-                    }
-                })
+                    })
             packerfile = "./tmp/current_packer.json"
             with open(packerfile, "w") as packer_current:
                 json.dump(packer_config, packer_current)
