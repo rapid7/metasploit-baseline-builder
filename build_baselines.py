@@ -1,7 +1,8 @@
-import packer
-import sys
-import re
 import json
+import os.path
+import packer
+import re
+import sys
 from xml.etree import ElementTree
 
 
@@ -151,9 +152,34 @@ def build_base(iso, md5):
         "iso_checksum_type": "md5"
     }
 
-    # if os_parts['version'] == "7":
-    #     autounattend = create_autounattend(vm_name, None, index="3", version=None)
-    # else:
+    esxi_file = "esxi_config.json"
+
+    # if an esxi_config file is found add to the packer file params needed for esxi
+    if os.path.isfile(esxi_file):
+        with open(esxi_file) as file:
+            esxi_config = json.load(file)
+            vars.update(esxi_config)
+
+        with open(packerfile) as packer_source:
+            packer_config = json.load(packer_source)
+            with packer_config['builders'] as builder:
+                if builder['type'] == "vmware-iso":
+                    builder.update({
+                    "remote_type": "esx5",
+                    "remote_host": "{{user `esxi_host`}}",
+                    "remote_datastore": "{{user `esxi_datastore`}}",
+                    "remote_username": "{{user `esxi_username`}}",
+                    "remote_password": "{{user `esxi_password`}}",
+                    "keep_registered": True,
+
+                    "vmx_data": {
+                      "ethernet0.networkName": "{{user `esxi_network`}}"
+                    }
+                })
+            packerfile = "./tmp/current_packer.json"
+            with open(packerfile, "w") as packer_current:
+                json.dump(packer_config, packer_current)
+
     autounattend = create_autounattend(vm_name, os_parts)
 
     vars.update({
