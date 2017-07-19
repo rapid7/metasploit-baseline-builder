@@ -175,10 +175,18 @@ def build_base(iso, md5):
                         "vnc_port_max": "5911",
                         "vnc_bind_address": "0.0.0.0",
                         "vnc_disable_password": True,
+                        "disk_type_id": "thin"
                     })
                     builder['vmx_data'].update({
                       "ethernet0.networkName": "{{user `esxi_network`}}"
                     })
+            packer_config["post-processors"] = []
+            # packer_config["post-processors"] = [{
+            #     "type": "vsphere",
+            #     "keep_input_artifact": False,
+            #     "disk_mode": "thin",
+            #
+            # }]
             packerfile = "./tmp/current_packer.json"
             with open(packerfile, "w") as packer_current:
                 json.dump(packer_config, packer_current)
