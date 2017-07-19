@@ -5,6 +5,7 @@ import re
 import sys
 from xml.etree import ElementTree
 
+TEMP_DIR = "./tmp"
 
 def create_autounattend(vm_name, os_parts=None, index="1"):
     os_keys = {
@@ -54,7 +55,11 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
             print "setting index value to " + index
             value.text = index
 
-    file_name = "./answer_files/windows/Autounattend.xml"
+    temp_path = os.path.join(TEMP_DIR, vm_name)
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
+
+    file_name = os.path.join(temp_path, "Autounattend.xml")
     tree.write(file_or_filename=file_name)
 
     return file_name
@@ -182,13 +187,12 @@ def build_base(iso, md5):
                       "ethernet0.networkName": "{{user `esxi_network`}}"
                     })
             packer_config["post-processors"] = []
-            # packer_config["post-processors"] = [{
-            #     "type": "vsphere",
-            #     "keep_input_artifact": False,
-            #     "disk_mode": "thin",
-            #
-            # }]
-            packerfile = "./tmp/current_packer.json"
+            temp_path = os.path.join(TEMP_DIR, vm_name)
+
+            if not os.path.exists(temp_path):
+                os.makedirs(temp_path)
+
+            packerfile = os.path.join(temp_path, "current_packer.json")
             with open(packerfile, "w") as packer_current:
                 json.dump(packer_config, packer_current)
 
