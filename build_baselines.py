@@ -175,7 +175,8 @@ def build_base(iso, md5):
                         "vnc_port_max": "5911",
                         "vnc_bind_address": "0.0.0.0",
                         "vnc_disable_password": True,
-                        "disk_type_id": "thin"
+                        "disk_type_id": "thin",
+                        "output_directory": vm_name
                     })
                     builder['vmx_data'].update({
                       "ethernet0.networkName": "{{user `esxi_network`}}"
