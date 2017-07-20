@@ -227,7 +227,7 @@ def main(argv):
     numProcessors = 1
 
     try:
-        opts, args = getopt.getopt(argv[1:], "hn", ["numProcessors="])
+        opts, args = getopt.getopt(argv[1:], "hn:", ["numProcessors="])
     except getopt.GetoptError:
         print argv[0] + ' -n <numProcessors>'
         sys.exit(2)
