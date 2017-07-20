@@ -1,4 +1,6 @@
+import getopt
 import json
+import multiprocessing
 import os.path
 import packer
 import re
@@ -140,6 +142,11 @@ def build_base(iso, md5):
         vm_name += "_" + os_parts["build_version"]
         output += "_" + os_parts["build_version"]
 
+    temp_path = os.path.join(TEMP_DIR, vm_name)
+
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
+
     # building vmware only for now
     output += "_vmware.box"
 
@@ -187,10 +194,6 @@ def build_base(iso, md5):
                       "ethernet0.networkName": "{{user `esxi_network`}}"
                     })
             packer_config["post-processors"] = []
-            temp_path = os.path.join(TEMP_DIR, vm_name)
-
-            if not os.path.exists(temp_path):
-                os.makedirs(temp_path)
 
             packerfile = os.path.join(temp_path, "current_packer.json")
             with open(packerfile, "w") as packer_current:
@@ -208,42 +211,77 @@ def build_base(iso, md5):
         "vm_name": vm_name
     })
 
-    p = packer.Packer(packerfile, only=only, vars=vars,
-                      out_iter=sys.stdout, err_iter=sys.stderr)
+    # with open(os.path.join(temp_path, "output.log"), "w") as out_file:
+    #     with open(os.path.join(temp_path, "error.log"), "w") as err_file:
+    out_file = os.path.join(temp_path, "output.log")
+    err_file = os.path.join(temp_path, "error.log")
+
+    p = packer.Packer(str(packerfile), only=only, vars=vars,
+                      out_iter=out_file, err_iter=err_file)
     p.build(parallel=True, debug=False, force=False)
 
     return p
 
-not_working = {
-    # "en_win_srv_2003_r2_standard_cd2.iso": "8985b1c1aac829f0d46d6aae088ecd67",
-    # "en_win_srv_2003_r2_standard_with_sp2_cd1_x13-04790.iso": "7c2e96e050d14def056e62d806da79e1",
-    # "en_win_srv_2003_r2_standard_with_sp2_cd2_x13-68583.iso": "099b4dea552813fbf07bc202cfbca39d",
-    # "en_win_srv_2003_r2_standard_x64_cd1.iso": "e7c31ef556396da7e2aa9a8f3c2ca7c3",
-    # "en_win_srv_2003_r2_standard_x64_cd2.iso": "917a53630b81f7e3364e3c651118f319",
-    # "en_win_srv_2003_r2_standard_x64_with_sp2_cd1_x13-05757.iso": "384f54fbd0f3524d4cc262f5892de230",
-    # "en_win_srv_2003_r2_standard_x64_with_sp2_cd2_x13-68587.iso": "f0dc235b52daa9a36de90c93703c466d",
 
-    # "en_windows_server_2003_standard.iso": "332aee5cf2ab3000de1c6bd0ff4e25a1",
-    # "en_windows_server_2003_standard_x64.iso": "d688d6ac0986a32d45b26e437a4259d2",
-    # "en_windows_server_2003_with_sp1_standard.iso": "5e7232fda658dbff9195f2fd7a302793",
+def main(argv):
+    numProcessors = 1
 
-    # "en_windows_server_2008_with_sp2_x64_dvd_342336.iso": "e94943ef484035b3288d8db69599a6b5",
-    # "en_windows_server_2008_with_sp2_x86_dvd_342333.iso": "b9201aeb6eef04a3c573d036a8780bdf",
-    # "en_windows_server_2008_x64_dvd_x14-26714.iso": "27c58cdb3d620f28c36333a5552f271c",
-    # "en_windows_server_2008_x86_dvd_x14-26710.iso": "0bfca49f0164de0a8eba236ced47007d",
+    try:
+        opts, args = getopt.getopt(argv[1:], "hn", ["numProcessors="])
+    except getopt.GetoptError:
+        print argv[0] + ' -n <numProcessors>'
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print argv[0] + ' -n <numProcessors>'
+            sys.exit()
+        elif opt in ("-n", "--numProcessors"):
+            numProcessors = int(arg)
 
-    # windows XP needs default scsi in vmware fusion to detect drive
-    # "en_windows_xp_professional_with_service_pack_3_x86_cd_x14-80428.iso": "f424a52153e6e5ed4c0d44235cf545d5",
-    # "en_windows_xp_professional_x64.iso": "d089dd4e7529219186e355e0306e94b0",
-    # "en_winxp_pro_with_sp2.iso": "5cc832a862c4075cf6bea6c6f0f69725",
-    # "en_winxp_pro_x86_build2600_iso": "91b6f82efda6b4a8b937867f20f5011b"
+    not_working = {
+        # "en_win_srv_2003_r2_standard_cd2.iso": "8985b1c1aac829f0d46d6aae088ecd67",
+        # "en_win_srv_2003_r2_standard_with_sp2_cd1_x13-04790.iso": "7c2e96e050d14def056e62d806da79e1",
+        # "en_win_srv_2003_r2_standard_with_sp2_cd2_x13-68583.iso": "099b4dea552813fbf07bc202cfbca39d",
+        # "en_win_srv_2003_r2_standard_x64_cd1.iso": "e7c31ef556396da7e2aa9a8f3c2ca7c3",
+        # "en_win_srv_2003_r2_standard_x64_cd2.iso": "917a53630b81f7e3364e3c651118f319",
+        # "en_win_srv_2003_r2_standard_x64_with_sp2_cd1_x13-05757.iso": "384f54fbd0f3524d4cc262f5892de230",
+        # "en_win_srv_2003_r2_standard_x64_with_sp2_cd2_x13-68587.iso": "f0dc235b52daa9a36de90c93703c466d",
 
-    # working but not currently built due to newer image for same build version
-    # "en_windows_10_multiple_editions_version_1511_updated_feb_2016_x64_dvd_8379634.iso": "a4fde74732557d75ffc5354d0271832e",
-}
+        # "en_windows_server_2003_standard.iso": "332aee5cf2ab3000de1c6bd0ff4e25a1",
+        # "en_windows_server_2003_standard_x64.iso": "d688d6ac0986a32d45b26e437a4259d2",
+        # "en_windows_server_2003_with_sp1_standard.iso": "5e7232fda658dbff9195f2fd7a302793",
 
-with open("iso_list.json", 'r') as iso_config:
-    iso_map = json.load(iso_config)
+        # "en_windows_server_2008_with_sp2_x64_dvd_342336.iso": "e94943ef484035b3288d8db69599a6b5",
+        # "en_windows_server_2008_with_sp2_x86_dvd_342333.iso": "b9201aeb6eef04a3c573d036a8780bdf",
+        # "en_windows_server_2008_x64_dvd_x14-26714.iso": "27c58cdb3d620f28c36333a5552f271c",
+        # "en_windows_server_2008_x86_dvd_x14-26710.iso": "0bfca49f0164de0a8eba236ced47007d",
 
-for file_name in iso_map:
-    build_base(file_name, iso_map[file_name])
+        # windows XP needs default scsi in vmware fusion to detect drive
+        # "en_windows_xp_professional_with_service_pack_3_x86_cd_x14-80428.iso": "f424a52153e6e5ed4c0d44235cf545d5",
+        # "en_windows_xp_professional_x64.iso": "d089dd4e7529219186e355e0306e94b0",
+        # "en_winxp_pro_with_sp2.iso": "5cc832a862c4075cf6bea6c6f0f69725",
+        # "en_winxp_pro_x86_build2600_iso": "91b6f82efda6b4a8b937867f20f5011b"
+
+        # working but not currently built due to newer image for same build version
+        # "en_windows_10_multiple_editions_version_1511_updated_feb_2016_x64_dvd_8379634.iso": "a4fde74732557d75ffc5354d0271832e",
+    }
+    with open("iso_list.json", 'r') as iso_config:
+        iso_map = json.load(iso_config)
+
+    if numProcessors > 1:
+        pool = multiprocessing.Pool(4)
+
+        results = []
+
+        for file_name in iso_map:
+            results.append(pool.apply_async(build_base, [file_name, iso_map[file_name]]))
+
+        for result in results:
+            result.get()
+    else:
+        for file_name in iso_map:
+            build_base(file_name, iso_map[file_name])
+
+
+if __name__ == "__main__":
+   main(sys.argv)
