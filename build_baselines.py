@@ -6,6 +6,8 @@ import packer
 import re
 import signal
 import sys
+import vm_automation
+
 from xml.etree import ElementTree
 
 TEMP_DIR = "./tmp"
@@ -69,6 +71,17 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
     return file_name
 
 
+def get_vm(vm_server, vm_name):
+    if vm_server is not None:
+        vm_server.enumerateVms()
+        # ick side effects maybe this object can just check for a vm with name
+        # doing this every time is also very inefficient but going with it for now
+        for vm in vm_server.vmList:
+            if vm.vmName == vm_name:
+                return vm
+    return None
+
+
 def parse_iso(file_name):
     print "processing " + file_name
     version_pattern = re.compile("en_win.*?_(\d_\d|\d.\d|\d+)_.*")
@@ -115,7 +128,7 @@ def parse_iso(file_name):
     }
 
 
-def build_base(iso, md5):
+def build_base(iso, md5, replace_existing):
     os_types_vmware = {
         "10": "windows9-64",
         "2003": "winnetstandard",
@@ -168,11 +181,20 @@ def build_base(iso, md5):
 
     esxi_file = "esxi_config.json"
 
+    vmServer = None
     # if an esxi_config file is found add to the packer file params needed for esxi
     if os.path.isfile(esxi_file):
         with open(esxi_file) as config_file:
             esxi_config = json.load(config_file)
             packer_vars.update(esxi_config)
+
+            # TODO: make this more efficeint than an object per build
+            vmServer = vm_automation.esxiServer(esxi_config["esxi_host"],
+                                                esxi_config["esxi_username"],
+                                                esxi_config["esxi_password"],
+                                                '443',  # default port for interaction
+                                                temp_path + 'esxi_automation.log')
+            vmServer.connect()
 
         with open(packerfile) as packer_source:
             packer_config = json.load(packer_source)
@@ -220,6 +242,15 @@ def build_base(iso, md5):
 
     p = packer.Packer(str(packerfile), only=only, vars=packer_vars,
                       out_iter=out_file, err_iter=err_file)
+    vm = get_vm(vmServer, vm_name)
+    if vm is not None:
+        if replace_existing:
+            vm.powerOff
+            vm.waitForTask(vm.vmObject.Destroy_Task())
+        else:
+            return p  # just return without exec since ret value is not checked anyways
+
+
     p.build(parallel=True, debug=False, force=False)
 
     return p
@@ -227,18 +258,23 @@ def build_base(iso, md5):
 
 def main(argv):
     num_processors = 1
+    replace_vms = False
 
     try:
-        opts, args = getopt.getopt(argv[1:], "hn:", ["numProcessors="])
+        opts, args = getopt.getopt(argv[1:], "hn:r", ["numProcessors="])
     except getopt.GetoptError:
         print argv[0] + ' -n <numProcessors>'
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print argv[0] + ' -n <numProcessors>'
+            print argv[0] + "[options]"
+            print '-n <int>, --numProcessors=<int>   execute <int> parallel builds'
+            print '-r, --replace                     replace existing baselines'
             sys.exit()
         elif opt in ("-n", "--numProcessors"):
             num_processors = int(arg)
+        elif opt in ("-r", "--replace"):
+            replace_vms = True
 
     not_working = {
         # "en_win_srv_2003_r2_standard_cd2.iso": "8985b1c1aac829f0d46d6aae088ecd67",
@@ -280,10 +316,10 @@ def main(argv):
         results = []
         try:
             for file_name in iso_map:
-                results.append(pool.apply_async(build_base, [file_name, iso_map[file_name]]))
-
+                results.append(pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms]))
+            fail_timeout = 60 * 60  # allow 1 hour to get results
             for result in results:
-                result.get(60 * 60 * 5) # allow 5 hours to get results
+                result.get(fail_timeout)
         except KeyboardInterrupt:
             print("User cancel received, terminating all builds")
             pool.terminate()
@@ -294,7 +330,7 @@ def main(argv):
 
     else:
         for file_name in iso_map:
-            build_base(file_name, iso_map[file_name])
+            build_base(file_name, iso_map[file_name], replace_vms)
 
 
 if __name__ == "__main__":
