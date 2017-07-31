@@ -9,7 +9,9 @@ from xml.etree import ElementTree
 
 TEMP_DIR = "./tmp"
 
+
 def create_autounattend(vm_name, os_parts=None, index="1"):
+    # Product Keys from http://technet.microsoft.com/en-us/library/jj612867.aspx
     os_keys = {
         "10": "W269N-WFGWX-YVC9B-4J6C9-T83GX",
         "2003": None,
@@ -28,12 +30,12 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
     ElementTree.register_namespace('', "urn:schemas-microsoft-com:unattend")
 
     if os_parts is not None and os_parts['arch'] is not None:
-        unattend_template = "./answer_files/windows/Autounattend_"+ os_parts['arch'] + ".xml"
+        unattend_template = "./answer_files/windows/Autounattend_" + os_parts['arch'] + ".xml"
     else:
         unattend_template = "./answer_files/windows/Autounattend_x64.xml"
 
-    with open(unattend_template, 'rt') as file:
-        tree = ElementTree.parse(file)
+    with open(unattend_template, 'rt') as unattend_file:
+        tree = ElementTree.parse(unattend_file)
 
     if os_parts is not None and os_keys[os_parts['version']] is not None:
         for key in tree.findall(
@@ -46,7 +48,6 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
                 if child.tag == "{urn:schemas-microsoft-com:unattend}Key":
                     key.remove(child)
             print "Removed product key"
-
 
     for name in tree.findall('.//{urn:schemas-microsoft-com:unattend}ComputerName'):
         print "changing " + name.text + " to " + vm_name
@@ -156,11 +157,11 @@ def build_base(iso, md5):
         print vm_name
 
     packerfile = './windows_packer.json'
-    #TODO: create custom vagrant file for the box being created for now packages a generic file
+    # TODO: create custom vagrant file for the box being created for now packages a generic file
     vagrant_template = 'vagrantfile-windows_packer.template'
 
     only = ['vmware-iso']
-    vars = {
+    packer_vars = {
         "iso_checksum_type": "md5"
     }
 
@@ -168,9 +169,9 @@ def build_base(iso, md5):
 
     # if an esxi_config file is found add to the packer file params needed for esxi
     if os.path.isfile(esxi_file):
-        with open(esxi_file) as file:
-            esxi_config = json.load(file)
-            vars.update(esxi_config)
+        with open(esxi_file) as config_file:
+            esxi_config = json.load(config_file)
+            packer_vars.update(esxi_config)
 
         with open(packerfile) as packer_source:
             packer_config = json.load(packer_source)
@@ -201,7 +202,7 @@ def build_base(iso, md5):
 
     autounattend = create_autounattend(vm_name, os_parts)
 
-    vars.update({
+    packer_vars.update({
         "iso_url": "./iso/" + iso,
         "iso_checksum": md5,
         "autounattend": autounattend,
@@ -216,7 +217,7 @@ def build_base(iso, md5):
     out_file = os.path.join(temp_path, "output.log")
     err_file = os.path.join(temp_path, "error.log")
 
-    p = packer.Packer(str(packerfile), only=only, vars=vars,
+    p = packer.Packer(str(packerfile), only=only, vars=packer_vars,
                       out_iter=out_file, err_iter=err_file)
     p.build(parallel=True, debug=False, force=False)
 
@@ -224,7 +225,7 @@ def build_base(iso, md5):
 
 
 def main(argv):
-    numProcessors = 1
+    num_processors = 1
 
     try:
         opts, args = getopt.getopt(argv[1:], "hn:", ["numProcessors="])
@@ -236,7 +237,7 @@ def main(argv):
             print argv[0] + ' -n <numProcessors>'
             sys.exit()
         elif opt in ("-n", "--numProcessors"):
-            numProcessors = int(arg)
+            num_processors = int(arg)
 
     not_working = {
         # "en_win_srv_2003_r2_standard_cd2.iso": "8985b1c1aac829f0d46d6aae088ecd67",
@@ -268,8 +269,8 @@ def main(argv):
     with open("iso_list.json", 'r') as iso_config:
         iso_map = json.load(iso_config)
 
-    if numProcessors > 1:
-        pool = multiprocessing.Pool(4)
+    if num_processors > 1:
+        pool = multiprocessing.Pool(num_processors)
 
         results = []
 
@@ -284,4 +285,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-   main(sys.argv)
+    main(sys.argv)
