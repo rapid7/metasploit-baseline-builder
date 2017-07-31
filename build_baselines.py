@@ -4,6 +4,7 @@ import multiprocessing
 import os.path
 import packer
 import re
+import signal
 import sys
 from xml.etree import ElementTree
 
@@ -270,15 +271,27 @@ def main(argv):
         iso_map = json.load(iso_config)
 
     if num_processors > 1:
+        original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
+
         pool = multiprocessing.Pool(num_processors)
 
+        signal.signal(signal.SIGINT, original_sigint_handler)
+
         results = []
+        try:
+            for file_name in iso_map:
+                results.append(pool.apply_async(build_base, [file_name, iso_map[file_name]]))
 
-        for file_name in iso_map:
-            results.append(pool.apply_async(build_base, [file_name, iso_map[file_name]]))
+            for result in results:
+                result.get(60 * 60 * 5) # allow 5 hours to get results
+        except KeyboardInterrupt:
+            print("User cancel received, terminating all builds")
+            pool.terminate()
+        else:
+            print("Build complete")
+            pool.close()
+        pool.join()
 
-        for result in results:
-            result.get()
     else:
         for file_name in iso_map:
             build_base(file_name, iso_map[file_name])
