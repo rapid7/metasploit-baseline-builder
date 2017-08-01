@@ -261,7 +261,7 @@ def main(argv):
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print argv[0] + "[options]"
+            print argv[0] + " [options]"
             print '-n <int>, --numProcessors=<int>   execute <int> parallel builds'
             print '-r, --replace                     replace existing baselines'
             sys.exit()
@@ -287,9 +287,14 @@ def main(argv):
                 pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms], callback=results.append)
 
             with tqdm(total=len(iso_map)) as progress:
+                current_len = 0
                 while len(results) < len(iso_map):
-                    progress.update(len(results))
-                    time.sleep(60)
+                    if (len(results) > current_len):
+                        progress.update(len(results) - current_len)
+                        current_len = len(results)
+                    else:
+                        progress.refresh()
+                    time.sleep(5)
                 progress.update(len(results))
         else:
             signal.signal(signal.SIGINT, original_sigint_handler)
