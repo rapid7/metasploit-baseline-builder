@@ -6,6 +6,8 @@ import packer
 import re
 import signal
 import sys
+import time
+from tqdm import tqdm
 import vm_automation
 
 from xml.etree import ElementTree
@@ -43,22 +45,22 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
     if os_parts is not None and os_keys[os_parts['version']] is not None:
         for key in tree.findall(
                 './/{urn:schemas-microsoft-com:unattend}ProductKey/{urn:schemas-microsoft-com:unattend}Key'):
-            print "changing " + key.text + " to " + os_keys[os_parts['version']]
+            # print "changing " + key.text + " to " + os_keys[os_parts['version']]
             key.text = os_keys[os_parts['version']]
     else:
         for key in tree.findall('.//{urn:schemas-microsoft-com:unattend}ProductKey'):
             for child in list(key):
                 if child.tag == "{urn:schemas-microsoft-com:unattend}Key":
                     key.remove(child)
-            print "Removed product key"
+            # print "Removed product key"
 
     for name in tree.findall('.//{urn:schemas-microsoft-com:unattend}ComputerName'):
-        print "changing " + name.text + " to " + vm_name
+        # print "changing " + name.text + " to " + vm_name
         name.text = vm_name
 
     if index != "1":
         for value in tree.findall('.//{urn:schemas-microsoft-com:unattend}MetaData/{urn:schemas-microsoft-com:unattend}Value'):
-            print "setting index value to " + index
+            # print "setting index value to " + index
             value.text = index
 
     temp_path = os.path.join(TEMP_DIR, vm_name)
@@ -83,7 +85,7 @@ def get_vm(vm_server, vm_name):
 
 
 def parse_iso(file_name):
-    print "processing " + file_name
+    # print "processing " + file_name
     version_pattern = re.compile("en_win.*?_(\d_\d|\d.\d|\d+)_.*")
     v = version_pattern.match(file_name)
     if v is None:
@@ -165,10 +167,10 @@ def build_base(iso, md5, replace_existing):
     # building vmware only for now
     output += "_vmware.box"
 
-    if len(vm_name) > 15:
-        print "**********************" + vm_name + " TOO LONG" + "**********************"
-    else:
-        print vm_name
+    # if len(vm_name) > 15:
+    #     print "**********************" + vm_name + " TOO LONG" + "**********************"
+    # else:
+    #     print vm_name
 
     packerfile = './windows_packer.json'
     # TODO: create custom vagrant file for the box being created for now packages a generic file
@@ -252,7 +254,7 @@ def build_base(iso, md5, replace_existing):
             vm.powerOff
             vm.waitForTask(vm.vmObject.Destroy_Task())
         else:
-            print "skipped existing build: " + vm_name
+            # print "skipped existing build: " + vm_name
             return p  # just return without exec since ret value is not checked anyways
 
 
@@ -311,32 +313,38 @@ def main(argv):
     with open("iso_list.json", 'r') as iso_config:
         iso_map = json.load(iso_config)
 
-    if num_processors > 1:
-        original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
+    original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-        pool = multiprocessing.Pool(num_processors)
+    pool = None
+    try:
+        if num_processors > 1:
+            pool = multiprocessing.Pool(num_processors)
 
-        signal.signal(signal.SIGINT, original_sigint_handler)
+            signal.signal(signal.SIGINT, original_sigint_handler)
 
-        results = []
-        try:
+            results = []
             for file_name in iso_map:
-                results.append(pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms]))
-            fail_timeout = 60 * 60  # allow 1 hour to get results
-            for result in results:
-                result.get(fail_timeout)
-        except KeyboardInterrupt:
-            print("User cancel received, terminating all builds")
-            pool.terminate()
+                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms], callback=results.append)
+
+            with tqdm(total=len(iso_map)) as progress:
+                while len(results) < len(iso_map):
+                    progress.update(len(results))
+                    time.sleep(60)
+                progress.update(len(results))
         else:
-            print("Build complete")
-            pool.close()
-        pool.join()
+            signal.signal(signal.SIGINT, original_sigint_handler)
+            for file_name in tqdm(iso_map):
+                build_base(file_name, iso_map[file_name], replace_vms)
 
+    except KeyboardInterrupt:
+        print("User cancel received, terminating all builds")
+        if pool is not None:
+            pool.terminate()
     else:
-        for file_name in iso_map:
-            build_base(file_name, iso_map[file_name], replace_vms)
-
+        print("Build complete")
+        if pool is not None:
+            pool.close()
+            pool.join()
 
 if __name__ == "__main__":
     main(sys.argv)
