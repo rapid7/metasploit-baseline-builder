@@ -214,6 +214,10 @@ def build_base(iso, md5, replace_existing):
                         "disk_type_id": "thin",
                         "output_directory": vm_name
                     })
+                    if esxi_config['esxi_cache_datastore'] is not None:
+                        builder.update({
+                            "remote_cache_datastore": "{{user `esxi_cache_datastore`}}"
+                        })
                     builder['vmx_data'].update({
                       "ethernet0.networkName": "{{user `esxi_network`}}"
                     })
@@ -248,6 +252,7 @@ def build_base(iso, md5, replace_existing):
             vm.powerOff
             vm.waitForTask(vm.vmObject.Destroy_Task())
         else:
+            print "skipped existing build: " + vm_name
             return p  # just return without exec since ret value is not checked anyways
 
 
