@@ -45,22 +45,18 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
     if os_parts is not None and os_keys[os_parts['version']] is not None:
         for key in tree.findall(
                 './/{urn:schemas-microsoft-com:unattend}ProductKey/{urn:schemas-microsoft-com:unattend}Key'):
-            # print "changing " + key.text + " to " + os_keys[os_parts['version']]
             key.text = os_keys[os_parts['version']]
     else:
         for key in tree.findall('.//{urn:schemas-microsoft-com:unattend}ProductKey'):
             for child in list(key):
                 if child.tag == "{urn:schemas-microsoft-com:unattend}Key":
                     key.remove(child)
-            # print "Removed product key"
 
     for name in tree.findall('.//{urn:schemas-microsoft-com:unattend}ComputerName'):
-        # print "changing " + name.text + " to " + vm_name
         name.text = vm_name
 
     if index != "1":
         for value in tree.findall('.//{urn:schemas-microsoft-com:unattend}MetaData/{urn:schemas-microsoft-com:unattend}Value'):
-            # print "setting index value to " + index
             value.text = index
 
     temp_path = os.path.join(TEMP_DIR, vm_name)
@@ -85,7 +81,6 @@ def get_vm(vm_server, vm_name):
 
 
 def parse_iso(file_name):
-    # print "processing " + file_name
     version_pattern = re.compile("en_win.*?_(\d_\d|\d.\d|\d+)_.*")
     v = version_pattern.match(file_name)
     if v is None:
@@ -167,11 +162,6 @@ def build_base(iso, md5, replace_existing):
     # building vmware only for now
     output += "_vmware.box"
 
-    # if len(vm_name) > 15:
-    #     print "**********************" + vm_name + " TOO LONG" + "**********************"
-    # else:
-    #     print vm_name
-
     packerfile = './windows_packer.json'
     # TODO: create custom vagrant file for the box being created for now packages a generic file
     vagrant_template = 'vagrantfile-windows_packer.template'
@@ -241,8 +231,6 @@ def build_base(iso, md5, replace_existing):
         "vm_name": vm_name
     })
 
-    # with open(os.path.join(temp_path, "output.log"), "w") as out_file:
-    #     with open(os.path.join(temp_path, "error.log"), "w") as err_file:
     out_file = os.path.join(temp_path, "output.log")
     err_file = os.path.join(temp_path, "error.log")
 
@@ -254,7 +242,6 @@ def build_base(iso, md5, replace_existing):
             vm.powerOff
             vm.waitForTask(vm.vmObject.Destroy_Task())
         else:
-            # print "skipped existing build: " + vm_name
             return p  # just return without exec since ret value is not checked anyways
 
 
@@ -283,33 +270,6 @@ def main(argv):
         elif opt in ("-r", "--replace"):
             replace_vms = True
 
-    not_working = {
-        # "en_win_srv_2003_r2_standard_cd2.iso": "8985b1c1aac829f0d46d6aae088ecd67",
-        # "en_win_srv_2003_r2_standard_with_sp2_cd1_x13-04790.iso": "7c2e96e050d14def056e62d806da79e1",
-        # "en_win_srv_2003_r2_standard_with_sp2_cd2_x13-68583.iso": "099b4dea552813fbf07bc202cfbca39d",
-        # "en_win_srv_2003_r2_standard_x64_cd1.iso": "e7c31ef556396da7e2aa9a8f3c2ca7c3",
-        # "en_win_srv_2003_r2_standard_x64_cd2.iso": "917a53630b81f7e3364e3c651118f319",
-        # "en_win_srv_2003_r2_standard_x64_with_sp2_cd1_x13-05757.iso": "384f54fbd0f3524d4cc262f5892de230",
-        # "en_win_srv_2003_r2_standard_x64_with_sp2_cd2_x13-68587.iso": "f0dc235b52daa9a36de90c93703c466d",
-
-        # "en_windows_server_2003_standard.iso": "332aee5cf2ab3000de1c6bd0ff4e25a1",
-        # "en_windows_server_2003_standard_x64.iso": "d688d6ac0986a32d45b26e437a4259d2",
-        # "en_windows_server_2003_with_sp1_standard.iso": "5e7232fda658dbff9195f2fd7a302793",
-
-        # "en_windows_server_2008_with_sp2_x64_dvd_342336.iso": "e94943ef484035b3288d8db69599a6b5",
-        # "en_windows_server_2008_with_sp2_x86_dvd_342333.iso": "b9201aeb6eef04a3c573d036a8780bdf",
-        # "en_windows_server_2008_x64_dvd_x14-26714.iso": "27c58cdb3d620f28c36333a5552f271c",
-        # "en_windows_server_2008_x86_dvd_x14-26710.iso": "0bfca49f0164de0a8eba236ced47007d",
-
-        # windows XP needs default scsi in vmware fusion to detect drive
-        # "en_windows_xp_professional_with_service_pack_3_x86_cd_x14-80428.iso": "f424a52153e6e5ed4c0d44235cf545d5",
-        # "en_windows_xp_professional_x64.iso": "d089dd4e7529219186e355e0306e94b0",
-        # "en_winxp_pro_with_sp2.iso": "5cc832a862c4075cf6bea6c6f0f69725",
-        # "en_winxp_pro_x86_build2600_iso": "91b6f82efda6b4a8b937867f20f5011b"
-
-        # working but not currently built due to newer image for same build version
-        # "en_windows_10_multiple_editions_version_1511_updated_feb_2016_x64_dvd_8379634.iso": "a4fde74732557d75ffc5354d0271832e",
-    }
     with open("iso_list.json", 'r') as iso_config:
         iso_map = json.load(iso_config)
 
