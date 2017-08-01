@@ -42,5 +42,6 @@ RUN su jenkins -c "/bin/bash -l -c 'pip install --upgrade python-packer'"
 VOLUME "$JENKINS_HOME"
 RUN chown -R jenkins "$JENKINS_HOME"
 
-RUN mkdir -p /r7-source/metasploit
-
+RUN mkdir -p /r7-source
+RUN su jenkins -c "/bin/bash -l -c 'cd /r7-source && git clone https://github.com/rapid7/vm-automation'"
+RUN su jenkins -c "/bin/bash -l -c 'cd /r7-source/vm-automation && pip install .'"
