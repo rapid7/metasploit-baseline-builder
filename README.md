@@ -5,9 +5,9 @@ This project provides baseline virtual machines for creation of testing environm
 ## Pre-Requisites
 Prior to usage of the utility provided here the following must be obtained or configured:
 
-* A visualization platform (i.e. VMWare Fusion, VMWare Workstation, VirtualBox)
+* A virtualization platform (i.e. VMWare Fusion, VMWare Workstation, VirtualBox)
 * Vagrant (https://www.vagrantup.com/)
-* Vagrant plugin for the visualization platform (for esxi `vagrant plugin install vagrant-vsphere`)
+* Vagrant plugin for the virtualization platform (for esxi `vagrant plugin install vagrant-vsphere`)
 * Packer (https://www.packer.io/)
 * Installation media for the desired operating systems.
 * Python >= 2.7.11
@@ -28,7 +28,7 @@ at `<install location>/iso`
 python build_baselines.py [options]
 
 ### WMWare ESXI (vsphere)
-Create an esxi_config.json with the required parameters.
+Create an `esxi_config.json` with the required parameters.
 ```
 {
   "esxi_host": "",
