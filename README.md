@@ -6,8 +6,6 @@ This project provides baseline virtual machines for creation of testing environm
 Prior to usage of the utility provided here the following must be obtained or configured:
 
 * A virtualization platform (i.e. VMWare Fusion, VMWare Workstation, VirtualBox)
-* Vagrant (https://www.vagrantup.com/)
-* Vagrant plugin for the virtualization platform (for esxi `vagrant plugin install vagrant-vsphere`)
 * Packer (https://www.packer.io/)
 * Installation media for the desired operating systems.
 * Python >= 2.7.11

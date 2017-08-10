@@ -18,10 +18,6 @@ RUN apt-get update && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN curl -L https://releases.hashicorp.com/vagrant/1.9.1/vagrant_1.9.1_x86_64.deb > vagrant_1.9.1_x86_64.deb && \
-	dpkg -i vagrant_1.9.1_x86_64.deb && \
-	apt-mark hold vagrant
-
 RUN curl -L https://releases.hashicorp.com/packer/1.0.3/packer_1.0.3_linux_amd64.zip > /root/packer_1.0.3_linux_amd64.zip && \
 	cd /usr/local/bin && \
 	unzip ~/packer_1.0.3_linux_amd64.zip
@@ -38,10 +34,12 @@ RUN echo 'eval "$(pyenv virtualenv-init -)"' >> $JENKINS_HOME/.bash_profile
 RUN su jenkins -c "/bin/bash -l -c 'pyenv install 2.7.13 && pyenv global 2.7.13'"
 RUN su jenkins -c "/bin/bash -l -c 'pip install --upgrade pyvmomi'"
 RUN su jenkins -c "/bin/bash -l -c 'pip install --upgrade python-packer'"
+RUN su jenkins -c "/bin/bash -l -c 'pip install --upgrade tqdm'"
 
 VOLUME "$JENKINS_HOME"
 RUN chown -R jenkins "$JENKINS_HOME"
 
 RUN mkdir -p /r7-source
+RUN chown -R jenkins "/r7-source"
 RUN su jenkins -c "/bin/bash -l -c 'cd /r7-source && git clone https://github.com/rapid7/vm-automation'"
 RUN su jenkins -c "/bin/bash -l -c 'cd /r7-source/vm-automation && pip install .'"
