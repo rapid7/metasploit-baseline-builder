@@ -108,8 +108,8 @@ docker build -t rapid7/build:payload-lab .
 To execute the build process:
 ```
 docker run --rm=true --tty -u jenkins \
-    --volume=${PATH_TO_WORKING_DIR}:/r7-source \
-    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-testing \
+    --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
+    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
     bash -l -c "python build_baselines.py [options]"
 ```
 
