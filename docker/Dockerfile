@@ -35,11 +35,8 @@ RUN su jenkins -c "/bin/bash -l -c 'pyenv install 2.7.13 && pyenv global 2.7.13'
 RUN su jenkins -c "/bin/bash -l -c 'pip install --upgrade pyvmomi'"
 RUN su jenkins -c "/bin/bash -l -c 'pip install --upgrade python-packer'"
 RUN su jenkins -c "/bin/bash -l -c 'pip install --upgrade tqdm'"
+RUN su jenkins -c "/bin/bash -l -c 'pip install --upgrade vm-automation'"
 
 VOLUME "$JENKINS_HOME"
 RUN chown -R jenkins "$JENKINS_HOME"
 
-RUN mkdir -p /r7-source
-RUN chown -R jenkins "/r7-source"
-RUN su jenkins -c "/bin/bash -l -c 'cd /r7-source && git clone https://github.com/rapid7/vm-automation'"
-RUN su jenkins -c "/bin/bash -l -c 'cd /r7-source/vm-automation && pip install .'"
