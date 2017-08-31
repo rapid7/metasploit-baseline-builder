@@ -114,7 +114,6 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "./scripts/configs/update_root_certs.bat",
-        "./scripts/installs/vm-guest-tools.bat",
         "./scripts/configs/vagrant-ssh.bat",
         "./scripts/configs/disable-auto-logon.bat",
         "./scripts/configs/enable-rdp.bat"
@@ -150,7 +149,8 @@
         "scripts/configs/apply_password_settings.bat",
         "scripts/configs/create_users.bat",
         "scripts/chocolatey_installs/java.bat",
-        "scripts/chocolatey_installs/python2.bat"
+        "scripts/chocolatey_installs/python2.bat",
+        "scripts/installs/vm-guest-tools.bat"
       ]
     },
     {
@@ -169,7 +169,7 @@
       "type": "windows-restart"
     },
     {
-    "type": "windows-shell",
+      "type": "windows-shell",
       "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
