@@ -101,7 +101,8 @@
     {
       "type": "file",
       "source": "scripts",
-      "destination": "C:/vagrant"
+      "destination": "C:/vagrant",
+      "pause_before": "1m"
     },
     {
       "type": "file",
