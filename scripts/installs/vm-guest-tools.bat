@@ -15,10 +15,21 @@ if exist "C:\Users\vagrant\windows.iso" (
     move /Y C:\Users\vagrant\windows.iso C:\Windows\Temp
 )
 
+powershell -Command "Get-CimInstance Win32_OperatingSystem | Select-Object  Caption | ForEach{ $_.Caption }" | find /i "7" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
+
+if %TOOLS_VER%==NEW (
+  powershell -Command "Get-CimInstance Win32_OperatingSystem | Select-Object  Caption | ForEach{ $_.Caption }" | find /i "2008" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
+)
+
 if not exist "C:\Windows\Temp\windows.iso" (
-    powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://softwareupdate.vmware.com/cds/vmw-desktop/ws/12.0.0/2985596/windows/packages/tools-windows.tar', 'C:\Windows\Temp\vmware-tools.tar')" <NUL
-    cmd /c ""C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\vmware-tools.tar -oC:\Windows\Temp"
-    FOR /r "C:\Windows\Temp" %%a in (VMware-tools-windows-*.iso) DO REN "%%~a" "windows.iso"
+    if %TOOLS_VER%==OLD (
+      powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://softwareupdate.vmware.com/cds/vmw-desktop/ws/12.0.0/2985596/windows/packages/tools-windows.tar', 'C:\Windows\Temp\vmware-tools.tar')" <NUL
+      cmd /c ""C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\vmware-tools.tar -oC:\Windows\Temp"
+      FOR /r "C:\Windows\Temp" %%a in (VMware-tools-windows-*.iso) DO REN "%%~a" "windows.iso"
+    )
+    if not exist "C:\Windows\Temp\windows.iso" (
+      powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://packages.vmware.com/tools/esx/6.5u1/windows/VMware-tools-windows-10.1.7-5541682.iso', 'C:\Windows\Temp\windows.iso')" <NUL
+    )
 )
 
 cmd /c ""C:\Program Files\7-Zip\7z.exe" x "C:\Windows\Temp\windows.iso" -oC:\Windows\Temp\VMWare"
