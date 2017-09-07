@@ -15,10 +15,10 @@ if exist "C:\Users\vagrant\windows.iso" (
     move /Y C:\Users\vagrant\windows.iso C:\Windows\Temp
 )
 
-powershell -Command "Get-CimInstance Win32_OperatingSystem | Select-Object  Caption | ForEach{ $_.Caption }" | find /i "7" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
+wmic os get caption | find /i "7" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
 
 if %TOOLS_VER%==NEW (
-  powershell -Command "Get-CimInstance Win32_OperatingSystem | Select-Object  Caption | ForEach{ $_.Caption }" | find /i "2008" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
+  wmic os get caption | find /i "2008" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
 )
 
 if not exist "C:\Windows\Temp\windows.iso" (
