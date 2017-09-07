@@ -273,9 +273,15 @@
                     <Order>27</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>reg add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff</CommandLine>
+                    <CommandLine>%SystemRoot%\System32\reg.exe add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff</CommandLine>
                     <Description>Disable the network discovery prompt window</Description>
                     <Order>28</Order>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>%SystemRoot%\System32\reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f</CommandLine>
+                    <Description>Disable Windows Defender</Description>
+                    <Order>29</Order>
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                  <!--WITHOUT WINDOWS UPDATES -->
