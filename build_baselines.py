@@ -13,6 +13,7 @@ import vm_automation
 from xml.etree import ElementTree
 
 TEMP_DIR = "./tmp"
+esxi_file = "esxi_config.json"
 
 
 def create_autounattend(vm_name, os_parts=None, index="1"):
@@ -68,6 +69,36 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
 
     return file_name
 
+def get_esxi(esxi_file):
+    if os.path.isfile(esxi_file):
+        with open(esxi_file) as config_file:
+            esxi_config = json.load(config_file)
+
+            # TODO: make this more efficient than an new object per call
+            vmServer = vm_automation.esxiServer(esxi_config["esxi_host"],
+                                                esxi_config["esxi_username"],
+                                                esxi_config["esxi_password"],
+                                                '443',  # default port for interaction
+                                                'esxi_automation.log')
+            vmServer.connect()
+            return vmServer
+    return None
+
+def remove_baseline(vmServer, iso):
+    os_parts = parse_iso(iso)
+    vm_name = get_vm_name(os_parts)
+    vm = get_vm(vmServer, vm_name)
+    if vm is not None:
+        vm.powerOff
+        vm.waitForTask(vm.vmObject.Destroy_Task())
+
+def get_vm_name(os_parts):
+    vm_name = "Win" + os_parts["version"].replace(".", "") + os_parts["arch"]
+    if os_parts["patch_level"] is not None:
+        vm_name += os_parts["patch_level"]
+    if os_parts["build_version"] is not None:
+        vm_name += "_" + os_parts["build_version"]
+    return vm_name
 
 def get_vm(vm_server, vm_name):
     if vm_server is not None:
@@ -125,7 +156,9 @@ def parse_iso(file_name):
     }
 
 
-def build_base(iso, md5, replace_existing):
+def build_base(iso, md5, replace_existing, vmServer=None):
+    global esxi_file
+
     os_types_vmware = {
         "10": "windows9-64",
         "2003": "winnetstandard",
@@ -143,15 +176,13 @@ def build_base(iso, md5, replace_existing):
 
     os_parts = parse_iso(iso)
 
-    vm_name = "Win" + os_parts["version"].replace(".", "") + os_parts["arch"]
+    vm_name = get_vm_name(os_parts)
     output = "windows_" + os_parts['version'] + "_" + os_parts['arch']
 
     if os_parts["patch_level"] is not None:
-        vm_name += os_parts["patch_level"]
         output += "_" + os_parts["patch_level"]
 
     if os_parts["build_version"] is not None:
-        vm_name += "_" + os_parts["build_version"]
         output += "_" + os_parts["build_version"]
 
     temp_path = os.path.join(TEMP_DIR, vm_name)
@@ -171,22 +202,11 @@ def build_base(iso, md5, replace_existing):
         "iso_checksum_type": "md5"
     }
 
-    esxi_file = "esxi_config.json"
-
-    vmServer = None
     # if an esxi_config file is found add to the packer file params needed for esxi
-    if os.path.isfile(esxi_file):
+    if vmServer is not None:
         with open(esxi_file) as config_file:
             esxi_config = json.load(config_file)
             packer_vars.update(esxi_config)
-
-            # TODO: make this more efficeint than an object per build
-            vmServer = vm_automation.esxiServer(esxi_config["esxi_host"],
-                                                esxi_config["esxi_username"],
-                                                esxi_config["esxi_password"],
-                                                '443',  # default port for interaction
-                                                temp_path + 'esxi_automation.log')
-            vmServer.connect()
 
         with open(packerfile) as packer_source:
             packer_config = json.load(packer_source)
@@ -220,6 +240,10 @@ def build_base(iso, md5, replace_existing):
                 json.dump(packer_config, packer_current)
 
     autounattend = create_autounattend(vm_name, os_parts)
+
+    os_type = os_types_vmware[os_parts['version']]
+    if os_parts['arch'] == 'x86':
+        os_type.replace("64", "32")
 
     packer_vars.update({
         "iso_url": "./iso/" + iso,
@@ -277,6 +301,13 @@ def main(argv):
 
     pool = None
     try:
+        vmServer = get_esxi(esxi_file)
+        if replace_vms and vmServer is not None:
+            print "removing baselines"
+            for file_name in tqdm(iso_map):
+                remove_baseline(vmServer, file_name)
+
+        print "generating baselines"
         if num_processors > 1:
             pool = multiprocessing.Pool(num_processors)
 
@@ -284,7 +315,7 @@ def main(argv):
 
             results = []
             for file_name in iso_map:
-                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms], callback=results.append)
+                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms, vmServer], callback=results.append)
 
             with tqdm(total=len(iso_map)) as progress:
                 current_len = 0
@@ -299,7 +330,7 @@ def main(argv):
         else:
             signal.signal(signal.SIGINT, original_sigint_handler)
             for file_name in tqdm(iso_map):
-                build_base(file_name, iso_map[file_name], replace_vms)
+                build_base(file_name, iso_map[file_name], replace_vms, vmServer)
 
     except KeyboardInterrupt:
         print("User cancel received, terminating all builds")
