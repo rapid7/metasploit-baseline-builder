@@ -60,6 +60,11 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
         for value in tree.findall('.//{urn:schemas-microsoft-com:unattend}MetaData/{urn:schemas-microsoft-com:unattend}Value'):
             value.text = index
 
+    if os_parts['version'] == "10":
+        for os_image in tree.findall('.//{urn:schemas-microsoft-com:unattend}OSImage'):
+            for metadata in tree.findall('.//{urn:schemas-microsoft-com:unattend}InstallFrom'):
+                os_image.remove(metadata)
+
     temp_path = os.path.join(TEMP_DIR, vm_name)
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
@@ -330,6 +335,7 @@ def main(argv):
         else:
             signal.signal(signal.SIGINT, original_sigint_handler)
             for file_name in tqdm(iso_map):
+                vmServer = get_esxi(esxi_file)
                 build_base(file_name, iso_map[file_name], replace_vms, vmServer)
 
     except KeyboardInterrupt:
