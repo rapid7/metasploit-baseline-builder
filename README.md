@@ -116,3 +116,7 @@ docker run --rm=true --tty -u jenkins \
 
 ### Logging Output
 When executed output for each VM will have logs in <WORKING_DIR>/tmp/<VM_NAME>
+
+### It Did Not Work?
+Check the output log files in each <VM_NAME>
+`ls -lrt metasploit-baseline-builder/*/output.log` will give the output logs in time order.  The most recent log is the one you should check.
