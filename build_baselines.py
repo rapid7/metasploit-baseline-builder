@@ -276,6 +276,11 @@ def build_base(iso, md5, replace_existing, vmServer=None):
 
     p.build(parallel=True, debug=False, force=False)
 
+    if vmServer is not None:
+        vm = get_vm(vmServer, vm_name)
+        if vm is not None:
+            vm.takeSnapshot(snapshotName='baseline')
+            # possibly change the network in future
     return p
 
 
