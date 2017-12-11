@@ -181,7 +181,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
 
     os_parts = parse_iso(iso)
 
-    vm_name = prependString + get_vm_name(os_parts)
+    vm_name = get_vm_name(os_parts)
     output = "windows_" + os_parts['version'] + "_" + os_parts['arch']
 
     if os_parts["patch_level"] is not None:
@@ -190,7 +190,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
     if os_parts["build_version"] is not None:
         output += "_" + os_parts["build_version"]
 
-    temp_path = os.path.join(TEMP_DIR, vm_name)
+    temp_path = os.path.join(TEMP_DIR, prependString + vm_name)
 
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
@@ -257,7 +257,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         "output": "./box/" + output,
         "vagrantfile_template": vagrant_template,
         "guest_os_type": os_types_vmware[os_parts['version']],
-        "vm_name": vm_name
+        "vm_name": prependString + vm_name
     })
 
     out_file = os.path.join(temp_path, "output.log")
@@ -303,6 +303,7 @@ def main(argv):
         elif opt in ("-n", "--numProcessors"):
             num_processors = int(arg)
         elif opt in ("-c", "--esxiConfig"):
+            global esxi_file
             esxi_file = arg
         elif opt in ("-p", "--prependString"):
             prependString = arg
