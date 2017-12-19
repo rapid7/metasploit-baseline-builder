@@ -48,7 +48,7 @@ def get_vm_server(config_file):
     return None
 
 
-def enable_uac(vm_config, vm_name, command):
+def execute_action(vm_config, vm_name, command):
     schedule_delay = 30
     vm_server = get_vm_server(config_file=vm_config)
     vm_server.enumerateVms()
@@ -71,6 +71,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-k", "--keyword", help="VM search parameter")
     parser.add_argument("-a", "--action", help="action [enable_uac|disable_smb1]")
+    parser.add_argument("-t", "--threads", help="Number of simultaneous threads", type=int)
     parser.add_argument("hypervisorConfig", help="json hypervisor config")
 
     args = parser.parse_args()
@@ -84,7 +85,11 @@ def main():
     if args.action.lower() == 'enable_uac':
         command = UAC_ENABLE_COMMAND
     elif args.action.lower() == 'disable_smb1':
-        command = UAC_ENABLE_COMMAND
+        command = DISABLE_SMB1_COMMAND
+
+    num_threads = 3
+    if args.threads is not None and args.threads > 0:
+        num_threads = args.threads
 
     vm_server = get_vm_server(config_file=args.hypervisorConfig)
     if vm_server is None:
@@ -101,13 +106,13 @@ def main():
 
     pool = None
     try:
-        pool = multiprocessing.Pool(3)
+        pool = multiprocessing.Pool(num_threads)
 
         signal.signal(signal.SIGINT, original_sigint_handler)
 
         results = []
         for vm_name in vm_list:
-            pool.apply_async(enable_uac, [args.hypervisorConfig, vm_name, command], callback=results.append)
+            pool.apply_async(execute_action, [args.hypervisorConfig, vm_name, command], callback=results.append)
 
         with tqdm(total=len(vm_list)) as progress:
             current_len = 0
