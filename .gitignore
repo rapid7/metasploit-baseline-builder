@@ -5,3 +5,4 @@
 /answer_files/windows/Autounattend.xml
 /esxi_config.json
 /*.log
+/helpers/*.log
