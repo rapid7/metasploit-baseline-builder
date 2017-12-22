@@ -256,7 +256,7 @@ def build_base(iso, md5, replace_existing, vmServer=None):
         "autounattend": autounattend,
         "output": "./box/" + output,
         "vagrantfile_template": vagrant_template,
-        "guest_os_type": os_types_vmware[os_parts['version']],
+        "guest_os_type": os_type,
         "vm_name": vm_name
     })
 
