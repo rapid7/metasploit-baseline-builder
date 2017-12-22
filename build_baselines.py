@@ -89,9 +89,9 @@ def get_esxi(esxi_file):
             return vmServer
     return None
 
-def remove_baseline(vmServer, iso):
+def remove_baseline(vmServer, iso, prependString = ""):
     os_parts = parse_iso(iso)
-    vm_name = get_vm_name(os_parts)
+    vm_name = prependString + get_vm_name(os_parts)
     vm = get_vm(vmServer, vm_name)
     if vm is not None:
         vm.powerOff
@@ -161,7 +161,7 @@ def parse_iso(file_name):
     }
 
 
-def build_base(iso, md5, replace_existing, vmServer=None):
+def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
     global esxi_file
 
     os_types_vmware = {
@@ -190,7 +190,7 @@ def build_base(iso, md5, replace_existing, vmServer=None):
     if os_parts["build_version"] is not None:
         output += "_" + os_parts["build_version"]
 
-    temp_path = os.path.join(TEMP_DIR, vm_name)
+    temp_path = os.path.join(TEMP_DIR, prependString + vm_name)
 
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
@@ -257,7 +257,7 @@ def build_base(iso, md5, replace_existing, vmServer=None):
         "output": "./box/" + output,
         "vagrantfile_template": vagrant_template,
         "guest_os_type": os_type,
-        "vm_name": vm_name
+        "vm_name": prependString + vm_name
     })
 
     out_file = os.path.join(temp_path, "output.log")
@@ -287,10 +287,11 @@ def build_base(iso, md5, replace_existing, vmServer=None):
 
 def main(argv):
     num_processors = 1
+    prependString = ""
     replace_vms = False
 
     try:
-        opts, args = getopt.getopt(argv[1:], "hn:r", ["numProcessors="])
+        opts, args = getopt.getopt(argv[1:], "c:hn:p:r", ["numProcessors="])
     except getopt.GetoptError:
         print argv[0] + ' -n <numProcessors>'
         sys.exit(2)
@@ -302,6 +303,11 @@ def main(argv):
             sys.exit()
         elif opt in ("-n", "--numProcessors"):
             num_processors = int(arg)
+        elif opt in ("-c", "--esxiConfig"):
+            global esxi_file
+            esxi_file = arg
+        elif opt in ("-p", "--prependString"):
+            prependString = arg
         elif opt in ("-r", "--replace"):
             replace_vms = True
 
@@ -316,7 +322,7 @@ def main(argv):
         if replace_vms and vmServer is not None:
             print "removing baselines"
             for file_name in tqdm(iso_map):
-                remove_baseline(vmServer, file_name)
+                remove_baseline(vmServer, file_name, prependString)
 
         print "generating baselines"
         if num_processors > 1:
@@ -326,7 +332,7 @@ def main(argv):
 
             results = []
             for file_name in iso_map:
-                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms, vmServer], callback=results.append)
+                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms, vmServer, prependString], callback=results.append)
 
             with tqdm(total=len(iso_map)) as progress:
                 current_len = 0
@@ -342,7 +348,7 @@ def main(argv):
             signal.signal(signal.SIGINT, original_sigint_handler)
             for file_name in tqdm(iso_map):
                 vmServer = get_esxi(esxi_file)
-                build_base(file_name, iso_map[file_name], replace_vms, vmServer)
+                build_base(file_name, iso_map[file_name], replace_vms, vmServer, prependString)
 
     except KeyboardInterrupt:
         print("User cancel received, terminating all builds")
