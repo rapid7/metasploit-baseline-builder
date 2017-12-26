@@ -248,7 +248,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
 
     os_type = os_types_vmware[os_parts['version']]
     if os_parts['arch'] == 'x86':
-        os_type.replace("64", "32")
+        os_type = os_type.replace("64", "32")
 
     packer_vars.update({
         "iso_url": "./iso/" + iso,
