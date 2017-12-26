@@ -16,7 +16,7 @@ TEMP_DIR = "./tmp"
 esxi_file = "esxi_config.json"
 
 
-def create_autounattend(vm_name, os_parts=None, index="1"):
+def create_autounattend(vm_name, os_parts=None, index="1", prependString=""):
     # Product Keys from http://technet.microsoft.com/en-us/library/jj612867.aspx
     os_keys = {
         "10": "W269N-WFGWX-YVC9B-4J6C9-T83GX",
@@ -65,7 +65,7 @@ def create_autounattend(vm_name, os_parts=None, index="1"):
             for metadata in tree.findall('.//{urn:schemas-microsoft-com:unattend}InstallFrom'):
                 os_image.remove(metadata)
 
-    temp_path = os.path.join(TEMP_DIR, vm_name)
+    temp_path = os.path.join(TEMP_DIR, prependString + vm_name)
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
 
@@ -229,7 +229,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
                         "vnc_bind_address": "0.0.0.0",
                         "vnc_disable_password": True,
                         "disk_type_id": "thin",
-                        "output_directory": vm_name
+                        "output_directory": prependString + vm_name
                     })
                     if esxi_config['esxi_cache_datastore'] is not None:
                         builder.update({
@@ -244,7 +244,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
             with open(packerfile, "w") as packer_current:
                 json.dump(packer_config, packer_current)
 
-    autounattend = create_autounattend(vm_name, os_parts)
+    autounattend = create_autounattend(vm_name, os_parts, prependString=prependString)
 
     os_type = os_types_vmware[os_parts['version']]
     if os_parts['arch'] == 'x86':
@@ -265,7 +265,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
 
     p = packer.Packer(str(packerfile), only=only, vars=packer_vars,
                       out_iter=out_file, err_iter=err_file)
-    vm = get_vm(vmServer, vm_name)
+    vm = get_vm(vmServer, prependString + vm_name)
     if vm is not None:
         if replace_existing:
             vm.powerOff
@@ -278,7 +278,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
 
     if vmServer is not None:
         vmServer.connect()
-        vm = get_vm(vmServer, vm_name)
+        vm = get_vm(vmServer, prependString + vm_name)
         if vm is not None:
             vm.takeSnapshot(snapshotName='baseline')
             # possibly change the network in future
