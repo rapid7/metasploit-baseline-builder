@@ -150,7 +150,6 @@
         "scripts/configs/apply_password_settings.bat",
         "scripts/configs/create_users.bat",
         "scripts/chocolatey_installs/vcredist2008.bat",
-        "scripts/chocolatey_installs/vcredist2015.bat",
         "scripts/installs/vm-guest-tools.bat"
       ]
     },
