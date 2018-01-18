@@ -298,7 +298,9 @@ def main(argv):
     for opt, arg in opts:
         if opt == '-h':
             print argv[0] + " [options]"
+            print '-c <file>, --esxiConfig=<file>   use alternate hypervisor config file'
             print '-n <int>, --numProcessors=<int>   execute <int> parallel builds'
+            print '-p <string>, --prependString=<file>   prepend string to the beginning of VM names'
             print '-r, --replace                     replace existing baselines'
             sys.exit()
         elif opt in ("-n", "--numProcessors"):
