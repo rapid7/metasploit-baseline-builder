@@ -149,8 +149,7 @@
         "scripts/chocolatey_installs/7zip.bat",
         "scripts/configs/apply_password_settings.bat",
         "scripts/configs/create_users.bat",
-        "scripts/chocolatey_installs/vcredist2008.bat",
-        "scripts/installs/vm-guest-tools.bat"
+        "scripts/chocolatey_installs/vcredist2008.bat"
       ]
     },
     {
@@ -162,9 +161,20 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/chocolatey_installs/java.bat",
-        "scripts/installs/install_ruby.bat",
+        "scripts/installs/install_ruby.bat"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "windows-shell",
+      "remote_path": "C:/Windows/Temp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
         "scripts/chocolatey_installs/python2.bat",
-        "scripts/chocolatey_installs/python3.bat"
+        "scripts/chocolatey_installs/python3.bat",
+        "scripts/installs/vm-guest-tools.bat"
       ]
     },
     {
