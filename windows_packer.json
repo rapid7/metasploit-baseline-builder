@@ -173,8 +173,7 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/chocolatey_installs/python2.bat",
-        "scripts/chocolatey_installs/python3.bat",
-        "scripts/installs/vm-guest-tools.bat"
+        "scripts/chocolatey_installs/python3.bat"
       ]
     },
     {
@@ -186,6 +185,7 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/configs/configure_firewall.bat",
+        "scripts/installs/vm-guest-tools.bat",
         "scripts/configs/packer_cleanup.bat"
       ]
     }
