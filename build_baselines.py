@@ -4,6 +4,7 @@ import multiprocessing
 import os.path
 import packer
 import re
+import sh
 import signal
 import sys
 import time
@@ -274,7 +275,11 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
             return p  # just return without exec since ret value is not checked anyways
 
 
-    p.build(parallel=True, debug=False, force=False)
+    try:
+        p.build(parallel=True, debug=False, force=False)
+    except sh.ErrorReturnCode:
+        print "Error: build of " + prependString + vm_name + " returned non-zero"
+        return p
 
     if vmServer is not None:
         vmServer.connect()
