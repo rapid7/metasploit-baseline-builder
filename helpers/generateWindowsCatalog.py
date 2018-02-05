@@ -63,7 +63,7 @@ def vm_as_cpe_string(vm_name):
 
     # NOTE: very specific to the current windows baseline build vm names
     cpe_str = "cpe:/o:" + "microsoft:" + "windows_"
-    if len(version) > 2:
+    if version.startswith('20'):
         cpe_str += "server_"
     cpe_str += version + ":"
     if build_version is not None:
@@ -124,7 +124,7 @@ def main():
         cpe_catalog[vm_server.hostname + "_" + name] = vm_entry
 
     with open(catalog_file, "w") as catalog_handle:
-        json.dump(cpe_catalog, catalog_handle, indent=2)
+        json.dump(cpe_catalog, catalog_handle, indent=2, sort_keys=True)
 
 if __name__ == "__main__":
     main()
