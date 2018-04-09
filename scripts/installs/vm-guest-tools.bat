@@ -1,15 +1,15 @@
 reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
 
 if %OS%==32BIT (
-    if not exist "C:\Windows\Temp\7z920.msi" (
-        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z1801.msi', 'C:\Windows\Temp\7z920.msi')" <NUL
+    if not exist "C:\Windows\Temp\7z1801.msi" (
+        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z1801.msi', 'C:\Windows\Temp\7z1801.msi')" <NUL
     )
 )
 if %OS%==64BIT echo This is a 64bit operating system
-    if not exist "C:\Windows\Temp\7z920.msi" (
-        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z1801-x64.msi', 'C:\Windows\Temp\7z920.msi')" <NUL
+    if not exist "C:\Windows\Temp\7z1801.msi" (
+        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z1801-x64.msi', 'C:\Windows\Temp\7z1801.msi')" <NUL
     )
-msiexec /qb /i C:\Windows\Temp\7z920.msi
+msiexec /qb /i C:\Windows\Temp\7z1801.msi
 
 if exist "C:\Users\vagrant\windows.iso" (
     move /Y C:\Users\vagrant\windows.iso C:\Windows\Temp
@@ -43,4 +43,4 @@ cmd /c C:\Windows\Temp\VMWare\setup.exe /S /v "/qn /l*v ""%TEMP%\vmmsi.log"" REB
 
 :done
 
-msiexec /qb /x C:\Windows\Temp\7z920.msi
+msiexec /qb /x C:\Windows\Temp\7z1801.msi
