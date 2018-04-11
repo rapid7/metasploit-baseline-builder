@@ -42,7 +42,8 @@
         "memsize": "4096",
         "numvcpus": "2",
         "scsi0.virtualDev": "lsisas1068",
-        "virtualHW.version": 10
+        "virtualHW.version": 10,
+        "tools.upgrade.policy": "manual"
       }
     },
     {
