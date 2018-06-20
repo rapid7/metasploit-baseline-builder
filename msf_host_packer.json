@@ -1,5 +1,5 @@
 {
-  "_comment": "Build with `packer build -var-file=ubuntu1604.json ubuntu.json`",
+  "_comment": "Build with `python build_msf_host.py`",
   "vm_name": "msf_host",
   "desktop": "true",
   "cpus": "2",

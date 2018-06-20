@@ -30,14 +30,27 @@ apt-get -y install postgresql-9.6 postgresql-server-dev-9.6 linux-libc-dev tzdat
 	cd /var/lib/postgresql && \
 	echo ${DB_CREATE} | sudo -u postgres psql 
 
-su ${SSH_USERNAME} -c "gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB"
+
+su ${SSH_USERNAME} -c 'mkdir ~/rapid7 && \
+  cd ~/rapid7 && \
+  git clone https://github.com/rapid7/metasploit-framework && \
+  cd metasploit-framework'
+
+RUBY_VERSION=`cat ./metasploit-framework/.ruby-version`
+su ${SSH_USERNAME} -c "curl -sSL https://rvm.io/mpapis.asc | gpg --import -"
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'curl -sSL https://get.rvm.io | bash -s stable'"
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'rvm autolibs disable && \
-  rvm install ruby-2.5.1 && \
-  rvm ruby-2.5.1 do gem install bundler --no-rdoc --no-ri && \
+  rvm install ${RUBY_VERSION} && \
+  rvm ${RUBY_VERSION} do gem install bundler --no-rdoc --no-ri && \
   rvm cleanup all'"
 
-su ${SSH_USERNAME} -c "curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash" 
+su ${SSH_USERNAME} -c 'git remote add upstream https://github.com/rapid7/metasploit-framework && \
+  /bin/bash -l -c "ruby tools/dev/add_pr_fetch.rb" && \
+  git config --global user.name   "Metasploit Tesing Lab User" && \
+  git config --global user.email  "IamNotReal@findthe.robot" && \
+  git config --global github.user "master"'
+
+su ${SSH_USERNAME} -c "curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash"
 
 ADD_BASH='export PATH="/home/vagrant/.pyenv/bin:$PATH"'
 su ${SSH_USERNAME} -c "echo '${ADD_BASH}' >> ~/.bash_profile"
@@ -46,16 +59,6 @@ su ${SSH_USERNAME} -c "echo '${ADD_BASH}' >> ~/.bash_profile"
 ADD_BASH='eval "$(pyenv virtualenv-init -)"'
 su ${SSH_USERNAME} -c "echo '${ADD_BASH}' >> ~/.bash_profile"
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'pyenv install 2.7.13 && pyenv global 2.7.13'"
-
-su ${SSH_USERNAME} -c 'mkdir ~/rapid7 && \
-  cd ~/rapid7 && \
-  git clone https://github.com/rapid7/metasploit-framework && \
-  cd metasploit-framework && \
-  git remote add upstream https://github.com/rapid7/metasploit-framework && \
-  /bin/bash -l -c "ruby tools/dev/add_pr_fetch.rb" && \
-  git config --global user.name   "Metasploit Tesing Lab User" && \
-  git config --global user.email  "IamNotReal@findthe.robot" && \
-  git config --global github.user "master"'
 
 su ${SSH_USERNAME} -c '/bin/bash -l -c "cd ~/rapid7/metasploit-framework && \
   gem install bundler --no-doc --no-ri && \

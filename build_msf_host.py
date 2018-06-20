@@ -52,8 +52,7 @@ def build_base(packer_var_file, replace_existing, vmServer=None, prependString =
     vm = vmServer.get_vm(prependString + vm_name)
     if vm is not None:
         if replace_existing:
-            vm.powerOff
-            vm.waitForTask(vm.vmObject.Destroy_Task())
+            vmServer.remove_vm(prependString + vm_name)
         else:
             return p  # just return without exec since ret value is not checked anyways
 
