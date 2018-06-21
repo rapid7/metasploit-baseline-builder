@@ -36,7 +36,7 @@ su ${SSH_USERNAME} -c 'mkdir ~/rapid7 && \
   git clone https://github.com/rapid7/metasploit-framework && \
   cd metasploit-framework'
 
-RUBY_VERSION=`cat ./metasploit-framework/.ruby-version`
+RUBY_VERSION=`cat /home/${SSH_USERNAME}/rapid7/metasploit-framework/.ruby-version`
 su ${SSH_USERNAME} -c "curl -sSL https://rvm.io/mpapis.asc | gpg --import -"
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'curl -sSL https://get.rvm.io | bash -s stable'"
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'rvm autolibs disable && \
