@@ -34,7 +34,7 @@ apt-get -y install postgresql-9.6 postgresql-server-dev-9.6 linux-libc-dev tzdat
 su ${SSH_USERNAME} -c 'mkdir ~/rapid7 && \
   cd ~/rapid7 && \
   git clone https://github.com/rapid7/metasploit-framework && \
-  cd metasploit-framework'
+  mkdir -p test_artifacts/test_scripts'
 
 RUBY_VERSION=`cat /home/${SSH_USERNAME}/rapid7/metasploit-framework/.ruby-version`
 su ${SSH_USERNAME} -c "curl -sSL https://rvm.io/mpapis.asc | gpg --import -"
