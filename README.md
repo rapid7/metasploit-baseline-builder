@@ -22,10 +22,16 @@ pip install vm-automation
 ### General
 Obtain all required iso files listed in `iso_list.json` make them available
 at `<install location>/iso`
+To build the msf_host be sure to init submodules
+```
+git submodules init
+git sudmodules update
+```
 
 
 ### VMWare Fusion and Workstation
 python build_baselines.py [options]
+python build_msf_host.py [options]
 
 ### WMWare ESXI (vsphere)
 Create an `esxi_config.json` with the required parameters.
@@ -98,6 +104,7 @@ esxcli network firewall refresh
 
 ##### Execute the build
 python build_baselines.py [options]
+python build_msf_host.py [options]
 
 ## Docker Environment
 Create a local user `jenkins` with UID=1001
@@ -113,6 +120,10 @@ docker run --rm=true --tty -u jenkins \
     --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
     --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
     bash -l -c "python build_baselines.py [options]"
+docker run --rm=true --tty -u jenkins \
+    --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
+    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
+    bash -l -c "python build_msf_host.py [options]"
 ```
 
 ### Logging Output

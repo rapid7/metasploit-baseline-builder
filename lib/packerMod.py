@@ -31,6 +31,7 @@ class packerMod:
                     "remote_datastore": "{{user `esxi_datastore`}}",
                     "remote_username": "{{user `esxi_username`}}",
                     "remote_password": "{{user `esxi_password`}}",
+                    "skip_export": True,
                     "keep_registered": True,
                     "vnc_port_min": "5900",
                     "vnc_port_max": "5911",
