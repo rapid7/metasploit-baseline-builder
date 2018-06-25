@@ -10,5 +10,8 @@
   "iso_url": "http://releases.ubuntu.com/16.04/ubuntu-16.04.4-server-amd64.iso",
   "memory": "1024",
   "preseed": "preseed.cfg",
+  "ssh_fullname": "msfuser",
+  "ssh_password": "vagrant",
+  "ssh_username": "msfuser",
   "custom_script": "../../scripts/msf_host/msf_host_setup.sh"
 }
