@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
+
 apt-get update && \
 	apt-get dist-upgrade -y && \
 	apt-get -y install software-properties-common && \
