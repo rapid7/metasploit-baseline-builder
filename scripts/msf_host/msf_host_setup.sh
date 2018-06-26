@@ -52,7 +52,7 @@ su ${SSH_USERNAME} -c 'git remote add upstream https://github.com/rapid7/metaspl
 
 su ${SSH_USERNAME} -c "curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash"
 
-ADD_BASH='export PATH="/home/vagrant/.pyenv/bin:$PATH"'
+ADD_BASH='export PATH="~/.pyenv/bin:$PATH"'
 su ${SSH_USERNAME} -c "echo '${ADD_BASH}' >> ~/.bash_profile"
 ADD_BASH='eval "$(pyenv init -)"'
 su ${SSH_USERNAME} -c "echo '${ADD_BASH}' >> ~/.bash_profile"
