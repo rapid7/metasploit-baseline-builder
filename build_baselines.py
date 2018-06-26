@@ -9,7 +9,8 @@ import signal
 import sys
 import time
 from tqdm import tqdm
-import vm_automation
+from lib import packerMod
+from lib import serverHelper
 
 from xml.etree import ElementTree
 
@@ -75,28 +76,15 @@ def create_autounattend(vm_name, os_parts=None, index="1", prependString=""):
 
     return file_name
 
-def get_esxi(esxi_file):
-    if os.path.isfile(esxi_file):
-        with open(esxi_file) as config_file:
-            esxi_config = json.load(config_file)
-
-            # TODO: make this more efficient than an new object per call
-            vmServer = vm_automation.esxiServer(esxi_config["esxi_host"],
-                                                esxi_config["esxi_username"],
-                                                esxi_config["esxi_password"],
-                                                '443',  # default port for interaction
-                                                'esxi_automation.log')
-            vmServer.connect()
-            return vmServer
-    return None
 
 def remove_baseline(vmServer, iso, prependString = ""):
     os_parts = parse_iso(iso)
     vm_name = prependString + get_vm_name(os_parts)
-    vm = get_vm(vmServer, vm_name)
+    vm = vmServer.get_vm(vm_name)
     if vm is not None:
         vm.powerOff
         vm.waitForTask(vm.vmObject.Destroy_Task())
+
 
 def get_vm_name(os_parts):
     vm_name = "Win" + os_parts["version"].replace(".", "") + os_parts["arch"]
@@ -105,16 +93,6 @@ def get_vm_name(os_parts):
     if os_parts["build_version"] is not None:
         vm_name += "_" + os_parts["build_version"]
     return vm_name
-
-def get_vm(vm_server, vm_name):
-    if vm_server is not None:
-        vm_server.enumerateVms()
-        # ick side effects maybe this object can just check for a vm with name
-        # doing this every time is also very inefficient but going with it for now
-        for vm in vm_server.vmList:
-            if vm.vmName == vm_name:
-                return vm
-    return None
 
 
 def parse_iso(file_name):
@@ -208,42 +186,23 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         "iso_checksum_type": "md5"
     }
 
+    packer_obj = packerMod(packerfile)
+
     # if an esxi_config file is found add to the packer file params needed for esxi
-    if vmServer is not None:
-        with open(esxi_file) as config_file:
-            esxi_config = json.load(config_file)
-            packer_vars.update(esxi_config)
-
-        with open(packerfile) as packer_source:
-            packer_config = json.load(packer_source)
-            for builder in packer_config['builders']:
-                if builder['type'] == "vmware-iso":
-                    builder.update({
-                        "remote_type": "esx5",
-                        "remote_host": "{{user `esxi_host`}}",
-                        "remote_datastore": "{{user `esxi_datastore`}}",
-                        "remote_username": "{{user `esxi_username`}}",
-                        "remote_password": "{{user `esxi_password`}}",
-                        "keep_registered": True,
-                        "vnc_port_min": "5900",
-                        "vnc_port_max": "5911",
-                        "vnc_bind_address": "0.0.0.0",
-                        "vnc_disable_password": True,
-                        "disk_type_id": "thin",
-                        "output_directory": prependString + vm_name
+    if vmServer.get_esxi() is not None:
+        packer_vars.update(vmServer.get_config())
+        packer_obj.use_esxi_config()
+    else:
+        packer_obj.update_config({
+                        "output": "./../../box/" + output
                     })
-                    if esxi_config['esxi_cache_datastore'] is not None:
-                        builder.update({
-                            "remote_cache_datastore": "{{user `esxi_cache_datastore`}}"
-                        })
-                    builder['vmx_data'].update({
-                      "ethernet0.networkName": "{{user `esxi_network`}}"
-                    })
-            packer_config["post-processors"] = []
 
-            packerfile = os.path.join(temp_path, "current_packer.json")
-            with open(packerfile, "w") as packer_current:
-                json.dump(packer_config, packer_current)
+    packerfile = os.path.join(temp_path, "current_packer.json")
+    packer_obj.save_config(packerfile)
+
+    packer_vars.update({
+        "vm_name": prependString + vm_name
+    })
 
     autounattend = create_autounattend(vm_name, os_parts, prependString=prependString)
 
@@ -266,14 +225,12 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
 
     p = packer.Packer(str(packerfile), only=only, vars=packer_vars,
                       out_iter=out_file, err_iter=err_file)
-    vm = get_vm(vmServer, prependString + vm_name)
+    vm = vmServer.get_vm(prependString + vm_name)
     if vm is not None:
         if replace_existing:
-            vm.powerOff
-            vm.waitForTask(vm.vmObject.Destroy_Task())
+            vmServer.remove_vm(vm_name)
         else:
             return p  # just return without exec since ret value is not checked anyways
-
 
     try:
         p.build(parallel=True, debug=False, force=False)
@@ -281,9 +238,8 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         print "Error: build of " + prependString + vm_name + " returned non-zero"
         return p
 
-    if vmServer is not None:
-        vmServer.connect()
-        vm = get_vm(vmServer, prependString + vm_name)
+    if vmServer.get_esxi() is not None:
+        vm = vmServer.get_vm(prependString + vm_name)
         if vm is not None:
             vm.takeSnapshot(snapshotName='baseline')
             # possibly change the network in future
@@ -325,8 +281,8 @@ def main(argv):
 
     pool = None
     try:
-        vmServer = get_esxi(esxi_file)
-        if replace_vms and vmServer is not None:
+        vmServer = serverHelper(esxi_file)
+        if replace_vms and vmServer.get_esxi() is not None:
             print "removing baselines"
             for file_name in tqdm(iso_map):
                 remove_baseline(vmServer, file_name, prependString)
@@ -354,7 +310,6 @@ def main(argv):
         else:
             signal.signal(signal.SIGINT, original_sigint_handler)
             for file_name in tqdm(iso_map):
-                vmServer = get_esxi(esxi_file)
                 build_base(file_name, iso_map[file_name], replace_vms, vmServer, prependString)
 
     except KeyboardInterrupt:

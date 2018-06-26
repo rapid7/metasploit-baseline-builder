@@ -1,0 +1,17 @@
+{
+  "_comment": "Build with `python build_msf_host.py`",
+  "vm_name": "msf_host",
+  "desktop": "true",
+  "cpus": "2",
+  "disk_size": "65536",
+  "iso_checksum": "ee834fbeb94cc55972b38caafa2029c29625e2e8",
+  "iso_checksum_type": "sha1",
+  "iso_name": "ubuntu-16.04.4-server-amd64.iso",
+  "iso_url": "http://releases.ubuntu.com/16.04/ubuntu-16.04.4-server-amd64.iso",
+  "memory": "1024",
+  "preseed": "preseed.cfg",
+  "ssh_fullname": "msfuser",
+  "ssh_password": "vagrant",
+  "ssh_username": "msfuser",
+  "custom_script": "../../scripts/msf_host/msf_host_setup.sh"
+}

@@ -18,9 +18,9 @@ RUN apt-get update && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN curl -L https://releases.hashicorp.com/packer/1.0.3/packer_1.0.3_linux_amd64.zip > /root/packer_1.0.3_linux_amd64.zip && \
+RUN curl -L https://releases.hashicorp.com/packer/1.2.4/packer_1.2.4_linux_amd64.zip > /root/packer_1.2.4_linux_amd64.zip && \
 	cd /usr/local/bin && \
-	unzip ~/packer_1.0.3_linux_amd64.zip
+	unzip ~/packer_1.2.4_linux_amd64.zip
 
 ENV JENKINS_HOME /var/jenkins_home
 RUN useradd -d "$JENKINS_HOME" -u 1001 -m -s /bin/sh jenkins

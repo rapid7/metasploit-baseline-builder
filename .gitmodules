@@ -1,0 +1,3 @@
+[submodule "boxcutter/ubuntu"]
+	path = boxcutter/ubuntu
+	url = https://github.com/boxcutter/ubuntu
