@@ -20,6 +20,7 @@ esxi_file = "esxi_config.json"
 
 def create_autounattend(vm_name, os_parts=None, index="1", prependString=""):
     # Product Keys from http://technet.microsoft.com/en-us/library/jj612867.aspx
+    # Newer keys from https://docs.microsoft.com/en-us/windows-server/get-started/kmsclientkeys
     os_keys = {
         "10": "W269N-WFGWX-YVC9B-4J6C9-T83GX",
         "2003": None,
@@ -29,6 +30,7 @@ def create_autounattend(vm_name, os_parts=None, index="1", prependString=""):
         "2012": "XC9B7-NBPP2-83J2H-RHMBY-92BT4",
         "2012r2": "D2N9P-3P6X9-2R39C-7RTCD-MDVJX",
         "2016": "WC2BQ-8NRM3-FDDYY-2BFGV-KHKQY",
+        "2019": "N69G4-B89J2-4G8F4-WWYCC-J464C",
         "7": "FJ82H-XT6CR-J8D7P-XQJJ2-GPDD4",
         "8": "NG4HW-VH26C-733KW-K6F98-J8CK4",
         "8.1": "GCRJD-8NW9H-F2CDX-CCM8D-9D6T9",
@@ -152,6 +154,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         "2012": "windows8srv-64",
         "2012r2": "windows8srv-64",
         "2016": "windows9srv-64",
+        "2019": "windows9srv-64",
         "7": "windows7-64",
         "8": "windows8-64",
         "8.1": "windows8-64",
