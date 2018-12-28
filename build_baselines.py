@@ -23,6 +23,9 @@ def create_autounattend(vm_name, os_parts=None, index="1", prependString=""):
     # Newer keys from https://docs.microsoft.com/en-us/windows-server/get-started/kmsclientkeys
     os_keys = {
         "10": "W269N-WFGWX-YVC9B-4J6C9-T83GX",
+        "1709": "DPCNP-XQFKJ-BJF7R-FRC8D-GF6G4",
+        "1803": "PTXN8-JFHJM-4WC78-MPCBR-9W4KR",
+        "1809": "N2KJX-J94YW-TQVFB-DG9YT-724CC",
         "2003": None,
         "2003r2": None,
         "2008": "TM24T-X9RMF-VWXK6-X8JC9-BFGM2",
@@ -129,7 +132,7 @@ def parse_iso(file_name):
 
     p = re.compile("en_win.*_version_(\d+)_.*")
     m = p.match(file_name)
-    if m is None:
+    if m is None or m.group(1) == version:
         build_version = None
     else:
         build_version = m.group(1)
@@ -147,6 +150,9 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
 
     os_types_vmware = {
         "10": "windows9-64",
+        "1709": "windows9srv-64",
+        "1803": "windows9srv-64",
+        "1809": "windows9srv-64",
         "2003": "winnetstandard",
         "2003r2": "winnetstandard-64",
         "2008": "longhorn-64",
