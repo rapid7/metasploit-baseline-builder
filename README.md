@@ -24,8 +24,8 @@ Obtain all required iso files listed in `iso_list.json` make them available
 at `<install location>/iso`
 To build the msf_host be sure to init submodules
 ```
-git submodules init
-git sudmodules update
+git submodule init
+git submodule update
 ```
 
 
