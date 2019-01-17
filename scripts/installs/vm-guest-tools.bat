@@ -11,10 +11,6 @@ if %OS%==64BIT echo This is a 64bit operating system
     )
 msiexec /qb /i C:\Windows\Temp\7z1801.msi
 
-if exist "C:\Users\vagrant\windows.iso" (
-    move /Y C:\Users\vagrant\windows.iso C:\Windows\Temp
-)
-
 wmic os get caption | find /i "7" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
 
 if %TOOLS_VER%==NEW (
