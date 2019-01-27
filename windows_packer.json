@@ -193,10 +193,10 @@
   ],
   "post-processors": [
     {
-      "type": "vagrant",
-      "keep_input_artifact": false,
-      "output": "{{user `output`}}",
-      "vagrantfile_template": "{{user `vagrantfile_template`}}"
+      "type": "shell-local",
+      "inline": ["/Applications/VMware\\ Fusion.app/Contents/Library/VMware\\ OVF\\ Tool/ovftool ./tmp/{{user `vm_name`}}-vmware-iso/{{user `vm_name`}}.vmx {{user `output`}}/{{user `vm_name`}}.ova",
+      "rm -R ./tmp/{{user `vm_name`}}-vmware-iso"
+    ]
     }
   ]
 }

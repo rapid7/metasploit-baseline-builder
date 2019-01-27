@@ -6,4 +6,5 @@
 /esxi_config.json
 /*.log
 /helpers/*.log
+ova-output
 .DS_Store
