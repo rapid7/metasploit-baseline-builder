@@ -63,6 +63,14 @@ def create_autounattend(vm_name, os_parts=None, index="1", prependString=""):
     for name in tree.findall('.//{urn:schemas-microsoft-com:unattend}ComputerName'):
         name.text = vm_name
 
+    if os_parts['version'] == "7":
+        index = "3"
+
+    os_ver_list = ["2012", "2016", "2019"]
+
+    if any(ver in os_parts['version'] for ver in os_ver_list):
+        index = "2"
+
     if index != "1":
         for value in tree.findall('.//{urn:schemas-microsoft-com:unattend}MetaData/{urn:schemas-microsoft-com:unattend}Value'):
             value.text = index
@@ -203,7 +211,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         packer_obj.use_esxi_config()
     else:
         packer_obj.update_config({
-                        "output": "./../../box/" + output
+                        "output": "./../../ova/"
                     })
 
     packerfile = os.path.join(temp_path, "current_packer.json")
@@ -223,7 +231,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         "iso_url": "./iso/" + iso,
         "iso_checksum": md5,
         "autounattend": autounattend,
-        "output": "./box/" + output,
+        "output": "./ova/",
         "vagrantfile_template": vagrant_template,
         "guest_os_type": os_type,
         "vm_name": prependString + vm_name
