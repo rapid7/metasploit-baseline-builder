@@ -63,6 +63,6 @@ su ${SSH_USERNAME} -c "echo '${ADD_BASH}' >> ~/.bash_profile"
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'pyenv install 2.7.13 && pyenv global 2.7.13'"
 
 su ${SSH_USERNAME} -c '/bin/bash -l -c "cd ~/rapid7/metasploit-framework && \
-  gem install bundler --no-doc --no-ri && \
+  sudo gem install bundler --no-doc --no-ri && \
   bundle install"'
 

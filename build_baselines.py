@@ -211,7 +211,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         packer_obj.use_esxi_config()
     else:
         packer_obj.update_config({
-                        "output": "./../../box/" + output
+                        "output": "./../../ova/"
                     })
 
     packerfile = os.path.join(temp_path, "current_packer.json")
@@ -231,7 +231,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         "iso_url": "./iso/" + iso,
         "iso_checksum": md5,
         "autounattend": autounattend,
-        "output": "./box/" + output,
+        "output": "./ova/",
         "vagrantfile_template": vagrant_template,
         "guest_os_type": os_type,
         "vm_name": prependString + vm_name
