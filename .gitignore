@@ -6,9 +6,5 @@
 /esxi_config.json
 /*.log
 /helpers/*.log
-.vscode/settings.json
-lib/__init__.pyc
-lib/packerMod.pyc
-lib/serverHelper.pyc
+ova-output
 .DS_Store
-boxcutter/ubuntu
