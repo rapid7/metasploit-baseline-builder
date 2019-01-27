@@ -6,3 +6,4 @@
 /esxi_config.json
 /*.log
 /helpers/*.log
+.DS_Store
