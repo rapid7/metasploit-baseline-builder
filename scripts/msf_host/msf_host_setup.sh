@@ -39,8 +39,9 @@ su ${SSH_USERNAME} -c 'mkdir ~/rapid7 && \
   mkdir -p test_artifacts/test_scripts'
 
 RUBY_VERSION=`cat /home/${SSH_USERNAME}/rapid7/metasploit-framework/.ruby-version`
-su ${SSH_USERNAME} -c "curl -sSL https://rvm.io/mpapis.asc | gpg --import -"
-su ${SSH_USERNAME} -c "/bin/bash -l -c 'curl -sSL https://get.rvm.io | bash -s stable'"
+su ${SSH_USERNAME} -c 'command curl -sSL https://rvm.io/mpapis.asc | gpg --import - && \
+  command curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - && \
+  curl -L -sSL https://get.rvm.io | bash -s stable'
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'rvm autolibs disable && \
   rvm install ${RUBY_VERSION} && \
   rvm ${RUBY_VERSION} do gem install bundler --no-rdoc --no-ri && \
