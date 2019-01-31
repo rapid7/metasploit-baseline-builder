@@ -10,3 +10,6 @@
 lib/__init__.pyc
 lib/packerMod.pyc
 lib/serverHelper.pyc
+*.ova
+.DS_Store
+*.iso
