@@ -30,8 +30,10 @@ git submodule update
 
 
 ### VMWare Fusion and Workstation
+```
 python build_baselines.py [options]
 python build_msf_host.py [options]
+```
 
 ### WMWare ESXI (vsphere)
 Create an `esxi_config.json` with the required parameters.
@@ -47,7 +49,7 @@ Create an `esxi_config.json` with the required parameters.
 ```
 
 #### Configure the ESXI server:
-Purloined from[Nick Charlton's December 2016 writeup.](https://nickcharlton.net/posts/using-packer-esxi-6.html) Thank you! 
+Purloined from [Nick Charlton's December 2016 writeup.](https://nickcharlton.net/posts/using-packer-esxi-6.html) Thank you! 
 
 ##### Enable SSH
 
@@ -103,8 +105,10 @@ esxcli network firewall refresh
 ```
 
 ##### Execute the build
+```
 python build_baselines.py [options]
 python build_msf_host.py [options]
+```
 
 ## Docker Environment
 Create a local user `jenkins` with UID=1001
