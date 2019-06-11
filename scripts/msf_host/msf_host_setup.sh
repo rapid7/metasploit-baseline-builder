@@ -44,7 +44,7 @@ su ${SSH_USERNAME} -c 'command curl -sSL https://rvm.io/mpapis.asc | gpg --impor
   curl -L -sSL https://get.rvm.io | bash -s stable'
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'rvm autolibs disable && \
   rvm install ${RUBY_VERSION} && \
-  rvm ${RUBY_VERSION} do gem install bundler --no-rdoc --no-ri && \
+  rvm ${RUBY_VERSION} do gem install bundler -v 1.17.3 --no-document && \
   rvm cleanup all'"
 
 su ${SSH_USERNAME} -c 'git remote add upstream https://github.com/rapid7/metasploit-framework && \
@@ -64,6 +64,6 @@ su ${SSH_USERNAME} -c "echo '${ADD_BASH}' >> ~/.bash_profile"
 su ${SSH_USERNAME} -c "/bin/bash -l -c 'pyenv install 2.7.13 && pyenv global 2.7.13'"
 
 su ${SSH_USERNAME} -c '/bin/bash -l -c "cd ~/rapid7/metasploit-framework && \
-  gem install bundler --no-doc --no-ri && \
+  gem install bundler --no-document && \
   bundle install"'
 
