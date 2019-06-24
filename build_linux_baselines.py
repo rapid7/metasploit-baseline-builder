@@ -13,6 +13,10 @@ from lib import serverHelper
 def build_base(packer_var_file, replace_existing, vmServer=None, prependString = ""):
     TEMP_DIR="tmp"
 
+    #packerfile = "./ubuntu_common.json"
+
+    #os.chdir("boxcutter/ubuntu")
+
     vm_name = packer_var_file.strip("_packer.json")
 
     temp_path = os.path.join("..", "..", TEMP_DIR, prependString + vm_name)
@@ -32,7 +36,7 @@ def build_base(packer_var_file, replace_existing, vmServer=None, prependString =
         "output": os.path.join("..", "..", "box", output)
     })
 
-    packerfile = "./ubuntu.json"  #ASK
+    packerfile = "./ubuntu.json"
 
     packer_obj = packerMod(packerfile)
     packer_obj.update_config(packer_vars)
@@ -45,8 +49,14 @@ def build_base(packer_var_file, replace_existing, vmServer=None, prependString =
                         "output": "./../../box/" + output
                     })
 
-    packerfile = os.path.join(temp_path, "ubuntu1404_current_packer.json")
+    packerfile = os.path.join(temp_path, "current_packer.json")
     packer_obj.save_config(packerfile)
+
+    #with open("./ubuntu.json") as packer_var_common:
+    #    packer_vars_common = json.load(packer_var_common)
+    #    packer_vars.update(packer_vars_common)
+
+        #deal w URLs here
 
     out_file = os.path.join(temp_path, "output.log")
     err_file = os.path.join(temp_path, "error.log")
@@ -57,7 +67,8 @@ def build_base(packer_var_file, replace_existing, vmServer=None, prependString =
     vm = vmServer.get_vm(prependString + vm_name)
     if vm is not None:
         if replace_existing:
-            vmServer.remove_vm(prependString + vm_name)
+            vm.powerOff
+            vm.waitForTask(vm.vmObject.Destroy_Task())
         else:
             return p  # just return without exec since ret value is not checked anyways
 
@@ -79,10 +90,10 @@ def main(argv):
 
     prependString = ""
     replace_vms = False
-    esxi_file = "esxi_config_ubuntu.json"
+    esxi_file = "esxi_config.json"
 
     try:
-        opts, args = getopt.getopt(argv[1:], "c:hp:r", ["prependString="]) #ASK
+        opts, args = getopt.getopt(argv[1:], "c:hp:r", ["prependString="])
     except getopt.GetoptError:
         print argv[0] + ' -n <numProcessors>'
         sys.exit(2)
@@ -105,6 +116,8 @@ def main(argv):
     vm_server = serverHelper(esxi_file)
 
     os.chdir("boxcutter/ubuntu")
+
+    #targets = glob.glob('ubuntu1404.json') #ubuntu1*.json
 
     for target in tqdm(targets):
         build_base(target, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
