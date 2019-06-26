@@ -13,10 +13,6 @@ from lib import serverHelper
 def build_base(packer_var_file, replace_existing, vmServer=None, prependString = ""):
     TEMP_DIR="tmp"
 
-    #packerfile = "./ubuntu_common.json"
-
-    #os.chdir("boxcutter/ubuntu")
-
     vm_name = packer_var_file.strip("_packer.json")
 
     temp_path = os.path.join("..", "..", TEMP_DIR, prependString + vm_name)
@@ -51,12 +47,6 @@ def build_base(packer_var_file, replace_existing, vmServer=None, prependString =
 
     packerfile = os.path.join(temp_path, "current_packer.json")
     packer_obj.save_config(packerfile)
-
-    #with open("./ubuntu.json") as packer_var_common:
-    #    packer_vars_common = json.load(packer_var_common)
-    #    packer_vars.update(packer_vars_common)
-
-        #deal w URLs here
 
     out_file = os.path.join(temp_path, "output.log")
     err_file = os.path.join(temp_path, "error.log")
@@ -116,8 +106,6 @@ def main(argv):
     vm_server = serverHelper(esxi_file)
 
     os.chdir("boxcutter/ubuntu")
-
-    #targets = glob.glob('ubuntu1404.json') #ubuntu1*.json
 
     for target in tqdm(targets):
         build_base(target, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
