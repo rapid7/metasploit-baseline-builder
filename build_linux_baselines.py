@@ -6,7 +6,7 @@ import sh
 import os
 import packer
 from tqdm import tqdm
-from lib import packerMod
+from lib import packerMod_Linux
 from lib import serverHelper
 
 
@@ -38,7 +38,7 @@ def build_base(packer_var_file, replace_existing, vmServer=None, prependString =
 
     packerfile = "./ubuntu.json"
 
-    packer_obj = packerMod(packerfile)
+    packer_obj = packerMod_Linux.packerMod(packerfile)
     packer_obj.update_config(packer_vars)
 
     if vmServer.get_esxi() is not None:

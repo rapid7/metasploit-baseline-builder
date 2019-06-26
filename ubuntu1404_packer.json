@@ -1,10 +1,10 @@
 {
-  "user": "sudo",
   "_comment": "Build with `packer build -var-file=ubuntu1404.json ubuntu.json`",
   "vm_name": "ubuntu1404",
   "iso_checksum": "5e567024c385cc8f90c83d6763c6e4f1cd5deb6f",
   "iso_name": "ubuntu-14.04.5-server-amd64.iso",
   "iso_url": "http://old-releases.ubuntu.com/releases/14.04.5/ubuntu-14.04.5-server-amd64.iso",
   "boot_command_prefix": "<esc><esc><enter><wait>",
-  "custom_script": "../../scripts/ubuntu_customs/ubuntu_setup.sh"
+  "custom_script": "../../scripts/ubuntu_customs/ubuntu_setup.sh",
+  "minimize_script": "../../scripts/ubuntu_customs/ubuntu_minimize.sh"
 }
