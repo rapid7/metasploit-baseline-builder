@@ -1,4 +1,6 @@
 import json
+import re
+import mmap
 
 
 class packerMod:
@@ -21,6 +23,42 @@ class packerMod:
                     "output": template['output']
                 })
                 break
+
+    def update_linux_config(self, template):
+        for prov in self.local_packer['provisioners']:  # this block allows us to customize the scripts for
+            if 'scripts' in prov:                       # all linux os types without the use of large data structures
+                prov.update({
+                    "scripts": [
+                        "{{user `update_script`}}",
+                        "{{user `desktop_script`}}",
+                        "{{user `vagrant_script`}}",
+                        "{{user `sshd_script`}}",
+                        "{{user `vmware_script`}}",
+                        "{{user `virtualbox_script`}}",
+                        "{{user `parallels_script`}}",
+                        "{{user `motd_script`}}",
+                        "{{user `custom_script`}}",
+                        "{{user `minimize_script`}}",
+                        "{{user `cleanup_script`}}"
+                    ]
+        })
+                
+        for processor in self.local_packer["post-processors"]:
+            if processor['type'] == 'vagrant':
+                processor.update({
+                    "output": template['output']
+                })
+                break
+
+    def update_url(self, template):  # this method will be expanded to account for url's of other os types
+        if "ubuntu" in template['iso_name']:
+            version = template['iso_name']
+            version = re.compile("(?!ubuntu-)(\d\d\.\d\d\.\d|\d\d\.\d\d)")
+            url = '/'.join([template['update_url_template'], version.pattern, template['iso_name']])
+            template.update({
+                            "iso_url": url
+                        })
+
 
     def use_esxi_config(self):
         for builder in self.local_packer['builders']:

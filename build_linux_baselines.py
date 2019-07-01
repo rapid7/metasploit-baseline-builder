@@ -5,15 +5,16 @@ import sys
 import sh
 import os
 import packer
+import requests
 from tqdm import tqdm
-from lib import packerMod_Linux
+from lib import packerMod
 from lib import serverHelper
 
 
-def build_base(packer_var_file, replace_existing, vmServer=None, prependString = ""):
+def build_base(packer_var_file, common_vars, replace_existing, vmServer=None, prependString = ""):
     TEMP_DIR="tmp"
 
-    vm_name = packer_var_file.strip("_packer.json")
+    vm_name = packer_var_file.strip(".json")
 
     temp_path = os.path.join("..", "..", TEMP_DIR, prependString + vm_name)
 
@@ -24,18 +25,24 @@ def build_base(packer_var_file, replace_existing, vmServer=None, prependString =
 
     only = ['vmware-iso']
 
-    with open(os.path.join("..", "..", packer_var_file)) as packer_var_source:
+    with open(os.path.join("", packer_var_file)) as packer_var_source:
         packer_vars = json.load(packer_var_source)
 
     packer_vars.update({
         "vm_name": prependString + vm_name,
         "output": os.path.join("..", "..", "box", output)
     })
-
+    
     packerfile = "./ubuntu.json"
+    common_vars.update(packer_vars)
+    packer_vars = common_vars.copy()
 
-    packer_obj = packerMod_Linux.packerMod(packerfile)
-    packer_obj.update_config(packer_vars)
+    packer_obj = packerMod(packerfile)
+    packer_obj.update_linux_config(packer_vars)
+
+    request = requests.head(packer_vars['iso_url'])
+    if request.status_code != 200:
+        packer_obj.update_url(packer_vars)
 
     if vmServer.get_esxi() is not None:
         packer_vars.update(vmServer.get_config())
@@ -101,14 +108,18 @@ def main(argv):
         elif opt in ("-r", "--replace"):
             replace_vms = True
 
-    targets = glob.glob('ubuntu1404_packer.json')
-
     vm_server = serverHelper(esxi_file)
+
+    common_var_file = "ubuntu_common.json" # this file will likely be changed to linux_common.json later on
+    with open(os.path.join("", common_var_file)) as common_var_source:
+        common_vars = json.load(common_var_source)
 
     os.chdir("boxcutter/ubuntu")
 
-    for target in tqdm(targets):
-        build_base(target, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
+    targets = glob.glob('ubuntu1404.json') # will be changed later to collect all linux packer files
+
+    for target in tqdm(targets):    
+        build_base(target, common_vars, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
 
     return True
 

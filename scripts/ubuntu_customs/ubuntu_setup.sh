@@ -13,9 +13,6 @@ apt-get update && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-	export JAVA_HOME="/usr/lib/jvm/openjdk-7-jdk"
-	export PATH=${PATH}:"'${JAVA_HOME}'/bin"
-
 	RUBY_VERSION='2.3.3'
 	su ${SSH_USERNAME} -c 'command curl -sSL https://rvm.io/mpapis.asc | gpg --import - && \
 	  command curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - && \
