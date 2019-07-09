@@ -35,7 +35,7 @@ def build_base(packer_var_file, common_vars, replace_existing, vmServer=None, pr
     
     packerfile = "./ubuntu.json"
     common_vars.update(packer_vars)
-    packer_vars = common_vars.copy()
+    packer_vars.update(common_vars)
 
     packer_obj = packerMod(packerfile)
     packer_obj.update_linux_config(packer_vars)
@@ -116,9 +116,8 @@ def main(argv):
 
     os.chdir("boxcutter/ubuntu")
 
-    targets = glob.glob('ubuntu1404.json') # will be changed later to collect all linux packer files
-
-    for target in tqdm(targets):    
+    targets = glob.glob('ubuntu1404.json') # can be changed to 'ubuntu1604.json' or 'ubuntu1804.json', working on globbing targets still
+    for target in tqdm(targets):
         build_base(target, common_vars, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
 
     return True

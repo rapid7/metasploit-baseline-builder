@@ -1,6 +1,5 @@
 import json
 import re
-import mmap
 
 
 class packerMod:
@@ -41,7 +40,7 @@ class packerMod:
                         "{{user `minimize_script`}}",
                         "{{user `cleanup_script`}}"
                     ]
-        })
+                })
                 
         for processor in self.local_packer["post-processors"]:
             if processor['type'] == 'vagrant':

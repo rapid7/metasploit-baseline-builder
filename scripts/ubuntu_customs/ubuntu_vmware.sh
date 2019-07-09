@@ -5,6 +5,7 @@ SSH_USERNAME=${SSH_USERNAME:-vagrant}
 function install_open_vm_tools {
     echo "==> Installing Open VM Tools"
     # Install open-vm-tools so we can mount shared folders
+    #dpkg --configure -a
     apt-get install -y open-vm-tools-lts-trusty
     # Install open-vm-tools-desktop so we can copy/paste, resize, etc.
     if [[ "$DESKTOP" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]]; then
@@ -56,7 +57,12 @@ if [[ $PACKER_BUILDER_TYPE =~ vmware ]]; then
     if [ "${MAJOR_VERSION}" -ge "4" ] && [ "${MINOR_VERSION}" -ge "1" ]; then
       # open-vm-tools supports shared folders on kernel 4.1 or greater
       . /etc/lsb-release
+
+      if [[ $DISTRIB_RELEASE == 18.04 ]]; then
+        install_vmware_tools
+      else
         install_open_vm_tools
+      fi
     else
       install_vmware_tools
     fi
