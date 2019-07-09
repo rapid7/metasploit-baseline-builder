@@ -6,6 +6,7 @@ import sh
 import os
 import packer
 import requests
+import fnmatch
 from tqdm import tqdm
 from lib import packerMod
 from lib import serverHelper
@@ -116,7 +117,7 @@ def main(argv):
 
     os.chdir("boxcutter/ubuntu")
 
-    targets = glob.glob('ubuntu1404.json') # can be changed to 'ubuntu1604.json' or 'ubuntu1804.json', working on globbing targets still
+    targets = glob.glob("ubuntu1[468]04.json")
     for target in tqdm(targets):
         build_base(target, common_vars, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
 
