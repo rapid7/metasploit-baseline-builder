@@ -1,5 +1,0 @@
-{
-  "custom_script":  "../../scripts/ubuntu_customs/ubuntu_setup.sh",
-  "minimize_script":  "../../scripts/ubuntu_customs/ubuntu_minimize.sh",
-  "vmware_script":  "../../scripts/ubuntu_customs/ubuntu_vmware.sh"
-}
