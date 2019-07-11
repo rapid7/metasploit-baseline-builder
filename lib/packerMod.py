@@ -51,9 +51,16 @@ class packerMod:
 
     def update_url(self, template):  # this method will be expanded to account for url's of other os types
         if "ubuntu" in template['iso_name']:
-            version = template['iso_name']
-            version = re.compile("(?!ubuntu-)(\d\d\.\d\d\.\d|\d\d\.\d\d)")
-            url = '/'.join([template['update_url_template'], version.pattern, template['iso_name']])
+            version = re.search('(\d\d\.\d\d\.\d)', template['iso_name'])
+            if version:
+                url = '/'.join([template['update_url_template'], version.group(0), template['iso_name']])
+            else:
+                version = re.search('(\d\d\.\d\d)', template['iso_name'])
+                v = version.group(0)
+                if 'live' in template['iso_name']: # handles more recent releases of ubuntu
+                    url = '/'.join([template['update_url_template'], v, template['iso_name']])
+                else:
+                    url = '/'.join([template['update_url_template'], v + ".0", template['iso_name']])
             template.update({
                             "iso_url": url
                         })
