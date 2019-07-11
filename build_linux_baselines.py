@@ -35,7 +35,6 @@ def build_base(packer_var_file, common_vars, replace_existing, vmServer=None, pr
     })
     
     packerfile = "./ubuntu.json"
-    common_vars.update(packer_vars)
     packer_vars.update(common_vars)
 
     packer_obj = packerMod(packerfile)
