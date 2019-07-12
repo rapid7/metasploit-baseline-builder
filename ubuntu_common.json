@@ -1,0 +1,14 @@
+{
+    "update_script": "script/update.sh",
+    "desktop_script": "script/desktop.sh",
+    "vagrant_script": "script/vagrant.sh",
+    "sshd_script": "script/sshd.sh",
+    "virtualbox_script": "script/virtualbox.sh",
+    "parallels_script": "script/parallels.sh",
+    "motd_script": "script/motd.sh",
+    "custom_script":  "../../scripts/ubuntu_customs/ubuntu_setup.sh",
+    "minimize_script":  "../../scripts/ubuntu_customs/ubuntu_minimize.sh",
+    "vmware_script":  "../../scripts/ubuntu_customs/ubuntu_vmware.sh",
+    "cleanup_script": "script/cleanup.sh",
+    "update_url_template": "http://old-releases.ubuntu.com/releases"
+}
