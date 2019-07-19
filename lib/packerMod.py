@@ -24,23 +24,45 @@ class packerMod:
                 break
 
     def update_linux_config(self, template):
-        for prov in self.local_packer['provisioners']:  # this block allows us to customize the scripts for
-            if 'scripts' in prov:                       # all linux os types without the use of large data structures
-                prov.update({
-                    "scripts": [
-                        "{{user `update_script`}}",
-                        "{{user `desktop_script`}}",
-                        "{{user `vagrant_script`}}",
-                        "{{user `sshd_script`}}",
-                        "{{user `vmware_script`}}",
-                        "{{user `virtualbox_script`}}",
-                        "{{user `parallels_script`}}",
-                        "{{user `motd_script`}}",
-                        "{{user `custom_script`}}",
-                        "{{user `minimize_script`}}",
-                        "{{user `cleanup_script`}}"
-                    ]
-                })
+        if 'ubuntu' in template['vm_name']:
+            for prov in self.local_packer['provisioners']:  # this block allows us to customize the scripts for
+                if 'scripts' in prov:                       # all linux os types without the use of large data structures
+                    prov.update({
+                        "scripts": [
+                            "{{user `update_script`}}",
+                            "{{user `desktop_script`}}",
+                            "{{user `vagrant_script`}}",
+                            "{{user `sshd_script`}}",
+                            "{{user `vmware_script`}}",
+                            "{{user `virtualbox_script`}}",
+                            "{{user `parallels_script`}}",
+                            "{{user `motd_script`}}",
+                            "{{user `custom_script`}}",
+                            "{{user `minimize_script`}}",
+                            "{{user `cleanup_script`}}"
+                        ]
+                    })
+        elif 'fedora' in template['vm_name']:
+            for prov in self.local_packer['provisioners']:  
+                if 'scripts' in prov:                       
+                    prov.update({
+                        "scripts": [
+                            "{{user `vagrant_script`}}",
+                            "{{user `virtualbox_script`}}",
+                            "{{user `parallels_script`}}",
+                            "{{user `custom_script`}}",
+                            #"script/custom.sh",
+                            "{{user `cleanup_script`}}"
+                        ]
+                    })
+            for builder in self.local_packer['builders']:
+                if 'boot_command' in builder:
+                    builder.update({
+                        "boot_command": [
+                            "<tab> linux text biosdevname=0 ks=hd:fd0:/{{ user `kickstart` }}<enter><enter>"
+                        ]
+                    })
+                    builder.update({'floppy_files': 'http/{{ user `kickstart` }}'})
                 
         for processor in self.local_packer["post-processors"]:
             if processor['type'] == 'vagrant':
@@ -64,6 +86,12 @@ class packerMod:
             template.update({
                             "iso_url": url
                         })
+        elif "fedora" in template['vm_name']:
+            version = re.search('\d\d', template['vm_name'])
+            url = '/'.join([template['update_url_template'], version.group(0), "Server/x86_64/iso", template['iso_name']])
+            template.update({
+                            "iso_url": url
+                    })
 
 
     def use_esxi_config(self):
