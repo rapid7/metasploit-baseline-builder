@@ -1,3 +1,6 @@
 [submodule "boxcutter/ubuntu"]
 	path = boxcutter/ubuntu
 	url = https://github.com/boxcutter/ubuntu
+[submodule "boxcutter/fedora"]
+	path = boxcutter/fedora
+	url = git@github.com:boxcutter/fedora.git
