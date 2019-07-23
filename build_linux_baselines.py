@@ -40,7 +40,7 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
     packer_obj.update_linux_config(packer_vars)
 
     request = requests.head(packer_vars['iso_url'])
-    if request.status_code != 200:
+    if request.status_code >= 400:
         packer_obj.update_url(packer_vars)
 
     if vmServer.get_esxi() is not None:
@@ -109,24 +109,24 @@ def main(argv):
 
     vm_server = serverHelper(esxi_file)
 
-    os.chdir("boxcutter")
-
-    os_dirs = [os.path.join(".", os_dir) for os_dir in os.listdir(".") if os.path.isdir(os.path.join(".",os_dir))]
+    os_dirs = [os_name for os_name in os.listdir("boxcutter") if os.path.isdir(os.path.join("boxcutter", os_name))]
     for os_dir in os_dirs:
-        os_name = os_dir.strip("./")
-        os.chdir(os.path.join("", os_name))
-
-        common_var_file = os.path.join("..", "..", os_name + "_common.json")
+        common_var_file = os.path.join("linux_vars", os_dir + "_common.json")
         with open(os.path.join("", common_var_file)) as common_var_source:
             common_vars = json.load(common_var_source)
 
-        packer_file = os_name + ".json"
+        os.chdir(os.path.join("boxcutter", os_dir))
+        packer_file = os_dir + ".json"
 
-        targets = common_vars['targets']
+        targets = []
+        for pattern in common_vars['file_patterns']:
+            targets.extend(glob.glob(pattern))
+
         for target in tqdm(targets):
             build_base(target, common_vars, packer_file, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
-        os.chdir("../")
-        
+
+        os.chdir("../../")
+
     return True
 
 if __name__ == "__main__":

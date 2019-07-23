@@ -7,15 +7,11 @@
     "custom_script":  "../../scripts/fedora_customs/fedora_setup.sh",
     "vmware_script":  "script/vmware.sh",
     "cleanup_script": "../../scripts/fedora_customs/fedora_cleanup.sh",
+    "http_directory": "http",
     "update_url_template": "https://archives.fedoraproject.org/pub/archive/fedora/linux/releases",
-    "targets": [
-      "fedora25.json",
-      "fedora26-server.json",
-      "fedora27-server.json",
-      "fedora28-server.json",
-      "fedora29-server.json"
+    "file_patterns": [
+      "fedora[23456789][0123456789].json",
+      "fedora[23456789][0123456789]-server.json"
     ],
-    "boot_command": [
-      "<tab> linux text biosdevname=0 ks=hd:fd0:/{{ user `kickstart` }}<enter><enter>"
-    ]
+    "boot_command": "<tab> linux text biosdevname=0 ks=hd:fd0:/{{ user `kickstart` }}<enter><enter>"
 }

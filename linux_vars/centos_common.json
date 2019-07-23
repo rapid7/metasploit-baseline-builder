@@ -1,0 +1,20 @@
+{
+    "fix-slow-dns_script": "script/fix-slow-dns.sh",
+    "desktop_script": "script/desktop.sh",
+    "vagrant_script": "script/vagrant.sh",
+    "sshd_script": "script/sshd.sh",
+    "virtualbox_script": "script/virtualbox.sh",
+    "parallels_script": "script/parallels.sh",
+    "motd_script": "script/motd.sh",
+    "custom_script":  "../../scripts/centos_customs/centos_setup.sh",
+    "vmware_script":  "../../scripts/centos_customs/centos_vmware.sh",
+    "cleanup_script": "script/cleanup.sh",
+    "update_url_template": "http://repos-lax.psychz.net/",
+    "file_patterns": [
+      "centos[123456789].json"
+    ],
+    "boot_command": [
+      "<up><wait><tab> text ks=hd:fd0:/ks.cfg<enter>"
+    ],
+    "kickstart": "ks.cfg"
+}

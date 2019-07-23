@@ -11,9 +11,7 @@
     "vmware_script":  "../../scripts/ubuntu_customs/ubuntu_vmware.sh",
     "cleanup_script": "script/cleanup.sh",
     "update_url_template": "http://old-releases.ubuntu.com/releases",
-    "targets": [
-      "ubuntu1404.json",
-      "ubuntu1604.json",
-      "ubuntu1804.json"
+    "file_patterns": [
+      "ubuntu1[468]04.json"
     ]
 }

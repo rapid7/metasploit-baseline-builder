@@ -28,20 +28,25 @@ class packerMod:
             if 'kickstart' in template and 'boot_command' in builder:
                 builder.update({
                     "boot_command": [
-                        "<tab> linux text biosdevname=0 ks=hd:fd0:/{{ user `kickstart` }}<enter><enter>"
+                        template['boot_command']
+                    ],
+                    "floppy_files": [
+                        '{{ user `http_directory` }}/{{ user `kickstart` }}'
                     ]
                 })
-                builder.update({'floppy_files': 'http/{{ user `kickstart` }}'})
 
         for prov in self.local_packer['provisioners']:
             if 'scripts' in prov:
                 update_scripts = []
                 for script in prov['scripts']:
                     if "script/" in script:
-                        script_name = script[script.index("/") + 1:script.index(".")]
-                        update_scripts.append("{{user `" + script_name + "_script`}}")
+                        script_name = script[script.index("/") + 1:script.index(".")] + "_script"
                     else:
-                        update_scripts.append("{{user `custom_script`}}")
+                        script_name = "custom_script"
+                    if script_name in template:
+                        update_scripts.append(template[script_name])
+                    else:
+                        update_scripts.append(script)
                 prov.update({
                         "scripts": update_scripts
                     })
@@ -54,23 +59,26 @@ class packerMod:
                 break
 
     def update_url(self, template): #this could be a lot better, I'll think on it
-        version = re.search('(\d\d\.\d\d\.\d)', template['iso_name'])
-        if version:
-            v = version.group(0)
-            url = '/'.join([template['update_url_template'], v, template['iso_name']])
+        if 'centos' in template['vm_name']:
+            url = template['update_url_template'] + template['iso_url'][template['iso_url'].index("centos"):]
         else:
-            version = re.search('(\d\d\.\d\d)', template['iso_name'])
+            version = re.search('(\d\d\.\d\d\.\d)', template['iso_name'])
             if version:
                 v = version.group(0)
-                if 'live' in template['iso_name']: # handles more recent releases of ubuntu
-                    url = '/'.join([template['update_url_template'], v, template['iso_name']])
-                else:
-                    v = v + ".0"
-                    url = '/'.join([template['update_url_template'], v, template['iso_name']])
+                url = '/'.join([template['update_url_template'], v, template['iso_name']])
             else:
-                version = re.search('\d\d', template['vm_name'])
-                v = version.group(0)
-                url = '/'.join([template['update_url_template'], version.group(0), "Server/x86_64/iso", template['iso_name']])
+                version = re.search('(\d\d\.\d\d)', template['iso_name'])
+                if version:
+                    v = version.group(0)
+                    if 'live' in template['iso_name']: # handles more recent releases of ubuntu
+                        url = '/'.join([template['update_url_template'], v, template['iso_name']])
+                    else:
+                        v = v + ".0"
+                        url = '/'.join([template['update_url_template'], v, template['iso_name']])
+                else:
+                    version = re.search('\d\d', template['vm_name'])
+                    v = version.group(0)
+                    url = '/'.join([template['update_url_template'], version.group(0), "Server/x86_64/iso", template['iso_name']])
 
         template.update({
                         "iso_url": url
