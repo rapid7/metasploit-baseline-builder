@@ -40,7 +40,7 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
     packer_obj.update_linux_config(packer_vars)
 
     request = requests.head(packer_vars['iso_url'])
-    if request.status_code >= 400:
+    if request.status_code != 200:
         packer_obj.update_url(packer_vars)
 
     if vmServer.get_esxi() is not None:
@@ -109,8 +109,7 @@ def main(argv):
 
     vm_server = serverHelper(esxi_file)
 
-    os_dirs = [os_name for os_name in os.listdir("boxcutter") if os.path.isdir(os.path.join("boxcutter", os_name))]
-    for os_dir in os_dirs:
+    for os_dir in os.listdir("boxcutter"):
         common_var_file = os.path.join("linux_vars", os_dir + "_common.json")
         with open(os.path.join("", common_var_file)) as common_var_source:
             common_vars = json.load(common_var_source)
