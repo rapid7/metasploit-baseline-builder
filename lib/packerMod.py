@@ -24,23 +24,32 @@ class packerMod:
                 break
 
     def update_linux_config(self, template):
-        for prov in self.local_packer['provisioners']:  # this block allows us to customize the scripts for
-            if 'scripts' in prov:                       # all linux os types without the use of large data structures
-                prov.update({
-                    "scripts": [
-                        "{{user `update_script`}}",
-                        "{{user `desktop_script`}}",
-                        "{{user `vagrant_script`}}",
-                        "{{user `sshd_script`}}",
-                        "{{user `vmware_script`}}",
-                        "{{user `virtualbox_script`}}",
-                        "{{user `parallels_script`}}",
-                        "{{user `motd_script`}}",
-                        "{{user `custom_script`}}",
-                        "{{user `minimize_script`}}",
-                        "{{user `cleanup_script`}}"
+        for builder in self.local_packer['builders']:
+            if 'kickstart' in template and 'boot_command' in builder:
+                builder.update({
+                    "boot_command": [
+                        template['boot_command']
+                    ],
+                    "floppy_files": [
+                        '{{ user `http_directory` }}/{{ user `kickstart` }}'
                     ]
                 })
+
+        for prov in self.local_packer['provisioners']:
+            if 'scripts' in prov:
+                update_scripts = []
+                for script in prov['scripts']:
+                    if "script/" in script:
+                        script_name = script[script.index("/") + 1:script.index(".")] + "_script"
+                    else:
+                        script_name = "custom_script"
+                    if script_name in template:
+                        update_scripts.append(template[script_name])
+                    else:
+                        update_scripts.append(script)
+                prov.update({
+                        "scripts": update_scripts
+                    })
                 
         for processor in self.local_packer["post-processors"]:
             if processor['type'] == 'vagrant':
@@ -49,21 +58,32 @@ class packerMod:
                 })
                 break
 
-    def update_url(self, template):  # this method will be expanded to account for url's of other os types
-        if "ubuntu" in template['iso_name']:
+    def update_url(self, template): #this could be a lot better, I'll think on it
+        if 'centos' in template['vm_name']:
+            url = template['update_url_template'] + template['iso_url'][template['iso_url'].index("centos"):]
+        else:
             version = re.search('(\d\d\.\d\d\.\d)', template['iso_name'])
             if version:
-                url = '/'.join([template['update_url_template'], version.group(0), template['iso_name']])
+                v = version.group(0)
+                url = '/'.join([template['update_url_template'], v, template['iso_name']])
             else:
                 version = re.search('(\d\d\.\d\d)', template['iso_name'])
-                v = version.group(0)
-                if 'live' in template['iso_name']: # handles more recent releases of ubuntu
-                    url = '/'.join([template['update_url_template'], v, template['iso_name']])
+                if version:
+                    v = version.group(0)
+                    if 'live' in template['iso_name']: # handles more recent releases of ubuntu
+                        url = '/'.join([template['update_url_template'], v, template['iso_name']])
+                    else:
+                        v = v + ".0"
+                        url = '/'.join([template['update_url_template'], v, template['iso_name']])
                 else:
-                    url = '/'.join([template['update_url_template'], v + ".0", template['iso_name']])
-            template.update({
-                            "iso_url": url
-                        })
+                    version = re.search('\d\d', template['vm_name'])
+                    v = version.group(0)
+                    url = '/'.join([template['update_url_template'], version.group(0), "Server/x86_64/iso", template['iso_name']])
+
+        template.update({
+                        "iso_url": url
+            })
+                               
 
 
     def use_esxi_config(self):

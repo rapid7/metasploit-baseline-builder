@@ -12,7 +12,7 @@ from lib import packerMod
 from lib import serverHelper
 
 
-def build_base(packer_var_file, common_vars, replace_existing, vmServer=None, prependString = ""):
+def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmServer=None, prependString = ""):
     TEMP_DIR="tmp"
 
     vm_name = packer_var_file.strip(".json")
@@ -33,8 +33,7 @@ def build_base(packer_var_file, common_vars, replace_existing, vmServer=None, pr
         "vm_name": prependString + vm_name,
         "output": os.path.join("..", "..", "box", output)
     })
-    
-    packerfile = "./ubuntu.json"
+
     packer_vars.update(common_vars)
 
     packer_obj = packerMod(packerfile)
@@ -110,15 +109,22 @@ def main(argv):
 
     vm_server = serverHelper(esxi_file)
 
-    common_var_file = "ubuntu_common.json" # this file will likely be changed to linux_common.json later on
-    with open(os.path.join("", common_var_file)) as common_var_source:
-        common_vars = json.load(common_var_source)
+    for os_dir in os.listdir("boxcutter"):
+        common_var_file = os.path.join("linux_vars", os_dir + "_common.json")
+        with open(os.path.join("", common_var_file)) as common_var_source:
+            common_vars = json.load(common_var_source)
 
-    os.chdir("boxcutter/ubuntu")
+        os.chdir(os.path.join("boxcutter", os_dir))
+        packer_file = os_dir + ".json"
 
-    targets = glob.glob("ubuntu1[468]04.json")
-    for target in tqdm(targets):
-        build_base(target, common_vars, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
+        targets = []
+        for pattern in common_vars['file_patterns']:
+            targets.extend(glob.glob(pattern))
+
+        for target in tqdm(targets):
+            build_base(target, common_vars, packer_file, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
+
+        os.chdir("../../")
 
     return True
 
