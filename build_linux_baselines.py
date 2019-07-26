@@ -124,7 +124,6 @@ def main(argv):
 
             targets = []
             for pattern in common_vars['file_patterns']:
-                print pattern
                 targets.extend(glob.glob(pattern))
 
             print "\nBuilding " + str(len(targets)) + " " + os_dir.capitalize() + " baselines:"
