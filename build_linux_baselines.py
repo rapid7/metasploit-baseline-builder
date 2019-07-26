@@ -16,6 +16,8 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
     TEMP_DIR="tmp"
 
     vm_name = packer_var_file.strip(".json")
+    if "-server" in vm_name:
+        vm_name = vm_name[:vm_name.index("-server")]
 
     temp_path = os.path.join("..", "..", TEMP_DIR, prependString + vm_name)
 
@@ -109,22 +111,27 @@ def main(argv):
 
     vm_server = serverHelper(esxi_file)
 
-    for os_dir in os.listdir("boxcutter"):
-        common_var_file = os.path.join("linux_vars", os_dir + "_common.json")
-        with open(os.path.join("", common_var_file)) as common_var_source:
-            common_vars = json.load(common_var_source)
+    os.chdir("boxcutter")
 
-        os.chdir(os.path.join("boxcutter", os_dir))
-        packer_file = os_dir + ".json"
+    for os_dir in os.listdir("."):
+        if os.path.isdir(os.path.join(".", os_dir)):
+            common_var_file = os.path.join("..", "linux_vars", os_dir + "_common.json")
+            with open(os.path.join("", common_var_file)) as common_var_source:
+                common_vars = json.load(common_var_source)
 
-        targets = []
-        for pattern in common_vars['file_patterns']:
-            targets.extend(glob.glob(pattern))
+            os.chdir(os.path.join("", os_dir))
+            packer_file = os_dir + ".json"
 
-        for target in tqdm(targets):
-            build_base(target, common_vars, packer_file, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
+            targets = []
+            for pattern in common_vars['file_patterns']:
+                print pattern
+                targets.extend(glob.glob(pattern))
 
-        os.chdir("../../")
+            print "\nBuilding " + str(len(targets)) + " " + os_dir.capitalize() + " baselines:"
+            for target in tqdm(targets):
+                build_base(target, common_vars, packer_file, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
+
+            os.chdir("../")
 
     return True
 

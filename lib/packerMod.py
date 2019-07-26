@@ -58,30 +58,27 @@ class packerMod:
                 })
                 break
 
-    def update_url(self, template): #this could be a lot better, I'll think on it
-        if 'centos' in template['vm_name']:
-            url = template['update_url_template'] + template['iso_url'][template['iso_url'].index("centos"):]
-        else:
-            version = re.search('(\d\d\.\d\d\.\d)', template['iso_name'])
-            if version:
-                v = version.group(0)
-                url = '/'.join([template['update_url_template'], v, template['iso_name']])
-            else:
-                version = re.search('(\d\d\.\d\d)', template['iso_name'])
-                if version:
-                    v = version.group(0)
-                    if 'live' in template['iso_name']: # handles more recent releases of ubuntu
-                        url = '/'.join([template['update_url_template'], v, template['iso_name']])
-                    else:
-                        v = v + ".0"
-                        url = '/'.join([template['update_url_template'], v, template['iso_name']])
-                else:
-                    version = re.search('\d\d', template['vm_name'])
-                    v = version.group(0)
-                    url = '/'.join([template['update_url_template'], version.group(0), "Server/x86_64/iso", template['iso_name']])
+    def update_url(self, template):
 
+        base = template['update_url_template']
+
+        if "VERSION" in template['update_url_template']: # this essentially just deals with ubuntu url's (or other difficult ones that pop up)
+            version = re.search('\d\d\.\d\d\.\d', template['iso_name'])
+            if version:
+                base = base[:base.index("VERSION")] + version.group(0)
+            else:
+                version = re.search('\d\d.\d\d', template['iso_name'])
+                if version and 'live' in template['iso_name']:
+                    version = version.group(0)
+                else:
+                    version = version.group(0) + ".0"
+                base = base[:base.index("VERSION")] + version
+            url = '/'.join([base, template['iso_name']])
+        else: # this should handle all other os url's
+            url = '/'.join([base, template['iso_url'][template['iso_url'].index(template['url_base_common'])+len(template['url_base_common']):]])
+        
         template.update({
-                        "iso_url": url
+                    "iso_url": url
             })
                                
 

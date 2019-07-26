@@ -9,12 +9,11 @@
     "custom_script":  "../../scripts/centos_customs/centos_setup.sh",
     "vmware_script":  "../../scripts/centos_customs/centos_vmware.sh",
     "cleanup_script": "script/cleanup.sh",
-    "update_url_template": "http://repos-lax.psychz.net/",
+    "update_url_template": "http://repos-lax.psychz.net/centos",
+    "url_base_common": "/centos/",
     "file_patterns": [
-      "centos[123456789].json"
+      "centos[1-9].json"
     ],
-    "boot_command": [
-      "<up><wait><tab> text ks=hd:fd0:/ks.cfg<enter>"
-    ],
+    "boot_command": "<up><wait><tab> text ks=hd:fd0:/ks.cfg<enter>",
     "kickstart": "ks.cfg"
 }
