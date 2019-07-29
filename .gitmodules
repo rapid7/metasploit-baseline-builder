@@ -4,3 +4,6 @@
 [submodule "boxcutter/fedora"]
 	path = boxcutter/fedora
 	url = git@github.com:boxcutter/fedora.git
+[submodule "boxcutter/centos"]
+	path = boxcutter/centos
+	url = git@github.com:boxcutter/centos.git

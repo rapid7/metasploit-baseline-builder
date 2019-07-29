@@ -9,9 +9,10 @@
     "cleanup_script": "../../scripts/fedora_customs/fedora_cleanup.sh",
     "http_directory": "http",
     "update_url_template": "https://archives.fedoraproject.org/pub/archive/fedora/linux/releases",
+    "url_base_common": "/releases/",
     "file_patterns": [
-      "fedora[23456789][0123456789].json",
-      "fedora[23456789][0123456789]-server.json"
+      "fedora[1-9][1-9].json",
+      "fedora[1-9]*-server.json"
     ],
     "boot_command": "<tab> linux text biosdevname=0 ks=hd:fd0:/{{ user `kickstart` }}<enter><enter>"
 }
