@@ -86,6 +86,8 @@ class packerMod:
     def use_esxi_config(self):
         for builder in self.local_packer['builders']:
             if builder['type'] == "vmware-iso":
+                if "tools_upload_flavor" in builder:
+                    builder.pop("tools_upload_flavor")
                 builder.update({
                     "remote_type": "esx5",
                     "remote_host": "{{user `esxi_host`}}",
