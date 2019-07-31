@@ -145,7 +145,7 @@ def parse_iso(file_name):
     }
 
 
-def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
+def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", index = "1"):
     global esxi_file
 
     os_types_vmware = {
@@ -213,7 +213,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         "vm_name": prependString + vm_name
     })
 
-    autounattend = create_autounattend(vm_name, os_parts, prependString=prependString)
+    autounattend = create_autounattend(vm_name, os_parts, index=index, prependString=prependString)
 
     os_type = os_types_vmware[os_parts['version']]
     if os_parts['arch'] == 'x86':
@@ -286,6 +286,12 @@ def main(argv):
     with open("iso_list.json", 'r') as iso_config:
         iso_map = json.load(iso_config)
 
+    if os.path.isfile("iso_index.json"):
+        with open("iso_index.json", 'r') as iso_index:
+            index_map = json.load(iso_index)
+    else:
+        index_map = {}
+
     original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     pool = None
@@ -304,7 +310,11 @@ def main(argv):
 
             results = []
             for file_name in iso_map:
-                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms, vmServer, prependString], callback=results.append)
+                if file_name in index_map:
+                    image_index = index_map[file_name]
+                else:
+                    image_index = "1"
+                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms, vmServer, prependString, image_index], callback=results.append)
 
             with tqdm(total=len(iso_map)) as progress:
                 current_len = 0
@@ -319,7 +329,11 @@ def main(argv):
         else:
             signal.signal(signal.SIGINT, original_sigint_handler)
             for file_name in tqdm(iso_map):
-                build_base(file_name, iso_map[file_name], replace_vms, vmServer, prependString)
+                if file_name in index_map:
+                    image_index = index_map[file_name]
+                else:
+                    image_index = "1"
+                build_base(file_name, iso_map[file_name], replace_vms, vmServer, prependString, image_index)
 
     except KeyboardInterrupt:
         print("User cancel received, terminating all builds")
