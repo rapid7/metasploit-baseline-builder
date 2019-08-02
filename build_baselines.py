@@ -286,12 +286,6 @@ def main(argv):
     with open("iso_list.json", 'r') as iso_config:
         iso_map = json.load(iso_config)
 
-    if os.path.isfile("iso_index.json"):
-        with open("iso_index.json", 'r') as iso_index:
-            index_map = json.load(iso_index)
-    else:
-        index_map = {}
-
     original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     pool = None
@@ -314,7 +308,7 @@ def main(argv):
                     image_index = index_map[file_name]
                 else:
                     image_index = "1"
-                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms, vmServer, prependString, image_index], callback=results.append)
+                pool.apply_async(build_base, [file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index']], callback=results.append)
 
             with tqdm(total=len(iso_map)) as progress:
                 current_len = 0
@@ -329,11 +323,7 @@ def main(argv):
         else:
             signal.signal(signal.SIGINT, original_sigint_handler)
             for file_name in tqdm(iso_map):
-                if file_name in index_map:
-                    image_index = index_map[file_name]
-                else:
-                    image_index = "1"
-                build_base(file_name, iso_map[file_name], replace_vms, vmServer, prependString, image_index)
+                build_base(file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index'])
 
     except KeyboardInterrupt:
         print("User cancel received, terminating all builds")
