@@ -26,24 +26,25 @@ def vm_as_cpe_string(vm_name):
             "vendor" : "canonical",
             "product" : "ubuntu_linux",
             "version_pattern" : ".*ubuntu(\d+).*",
-            "postfix" : ":::lts:::"
+            "postfix" : ":"
         },
         "fedora" : {
             "vendor" : "fedoraproject",
             "product" : "fedora",
             "version_pattern" : ".*fedora(\d+).*",
-            "postfix" : "::::::"
+            "postfix" : ":"
         },
         "centos" : {
             "vendor" : "centos",
             "product" : "centos",
             "version_pattern" : ".*centos(\d+).*",
-            "postfix" : "::::::"
+            "postfix" : ":"
         }
     }
 
-    os_name = "".join(re.findall("[a-zA-Z]+", vm_name))
-    
+    os_pattern = re.compile("linux_([a-z]*)\d*_x64")
+    os_name = (os_pattern.match(vm_name)).group(1)
+
     version_pattern = re.compile(cpe_parts[os_name]['version_pattern'])
     v = version_pattern.match(vm_name)
     version = v.group(1)
@@ -86,16 +87,18 @@ def main():
             cpe_catalog = json.load(catalog_handle)
 
     for name in tqdm(vm_list):
-        cpe_str = vm_as_cpe_string(name)
-        cpe = cpe_utils.CPE(cpe_str)
-        vm_entry = {
-            'NAME': name,
-            'CPE': cpe_str,
-            'USERNAME': "vagrant",
-            'PASSWORD': "vagrant",
-            'OS': cpe.human()
-        }
-        cpe_catalog[vm_server.hostname + "_" + name] = vm_entry
+        if "linux" in name:
+            cpe_str = vm_as_cpe_string(name)
+            if cpe_str:
+                cpe = cpe_utils.CPE(cpe_str)
+                vm_entry = {
+                    'NAME': name,
+                    'CPE': cpe_str,
+                    'USERNAME': "vagrant",
+                    'PASSWORD': "vagrant",
+                    'OS': cpe.human()
+                }
+                cpe_catalog[vm_server.hostname + "_" + name] = vm_entry
 
     with open(catalog_file, "w") as catalog_handle:
         json.dump(cpe_catalog, catalog_handle, indent=2, sort_keys=True)
