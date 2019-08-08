@@ -304,10 +304,6 @@ def main(argv):
 
             results = []
             for file_name in iso_map:
-                if file_name in index_map:
-                    image_index = index_map[file_name]
-                else:
-                    image_index = "1"
                 pool.apply_async(build_base, [file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index']], callback=results.append)
 
             with tqdm(total=len(iso_map)) as progress:
