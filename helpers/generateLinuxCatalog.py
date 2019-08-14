@@ -47,7 +47,6 @@ def vm_as_cpe_string(vm_name):
     os_name = os_pattern.match(vm_name)
     if os_name:
         os_name = os_name.group(0)
-        print os_name
     else: exit
 
     if os_name in cpe_parts:
