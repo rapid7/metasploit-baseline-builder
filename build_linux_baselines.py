@@ -18,7 +18,7 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
     vm_name = packer_var_file.strip(".json")
     if "-server" in vm_name:
         vm_name = vm_name[:vm_name.index("-server")]
-    vm_name = "linux_" + vm_name + "_x64"
+    vm_name = "Linux" + vm_name.capitalize() + "x64"
 
     temp_path = os.path.join("..", "..", TEMP_DIR, prependString + vm_name)
 

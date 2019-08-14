@@ -42,19 +42,26 @@ def vm_as_cpe_string(vm_name):
         }
     }
 
-    os_pattern = re.compile("linux_([a-z]*)\d*_x64")
-    os_name = (os_pattern.match(vm_name)).group(1)
+    vm_name = vm_name[vm_name.index("linux") + len("linux"):]
+    os_pattern = re.compile("[a-z]+")
+    os_name = os_pattern.match(vm_name)
+    if os_name:
+        os_name = os_name.group(0)
+        print os_name
+    else: exit
 
-    version_pattern = re.compile(cpe_parts[os_name]['version_pattern'])
-    v = version_pattern.match(vm_name)
-    version = v.group(1)
+    if os_name in cpe_parts:
+        version_pattern = re.compile(cpe_parts[os_name]['version_pattern'])
+        v = version_pattern.match(vm_name)
+        version = v.group(1)
 
-    if "ubuntu" in os_name:
-        version = version[:2] + "." + version[2:]
+        if "ubuntu" in os_name:
+            version = version[:2] + "." + version[2:]
 
-    cpe_str = "cpe:/o:" + ":".join([cpe_parts[os_name]['vendor'], cpe_parts[os_name]['product'], version, cpe_parts[os_name]['postfix']])
+        cpe_str = "cpe:/o:" + ":".join([cpe_parts[os_name]['vendor'], cpe_parts[os_name]['product'], version, cpe_parts[os_name]['postfix']])
 
-    return cpe_str
+        return cpe_str
+    else: exit
 
 def main():
     parser = argparse.ArgumentParser()
@@ -87,8 +94,8 @@ def main():
             cpe_catalog = json.load(catalog_handle)
 
     for name in tqdm(vm_list):
-        if "linux" in name:
-            cpe_str = vm_as_cpe_string(name)
+        if "linux" in name.lower(): 
+            cpe_str = vm_as_cpe_string(name.lower())
             if cpe_str:
                 cpe = cpe_utils.CPE(cpe_str)
                 vm_entry = {
