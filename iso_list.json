@@ -1,37 +1,173 @@
 {
-    "en_windows_10_consumer_edition_version_1809_updated_sept_2018_x64_dvd_491ea967.iso": "7a19f70f948614b55b716a6ee0ca5274",
-    "en_windows_10_consumer_edition_version_1809_updated_sept_2018_x86_dvd_c5960600.iso": "663e18f44a8e799f538d8c6ed5d4f520",
-    "en_windows_10_consumer_editions_version_1803_updated_march_2018_x64_dvd_12063379.iso": "986e2e17cf6b0b49141cd15699768e6e",
-    "en_windows_10_consumer_editions_version_1803_updated_march_2018_x86_dvd_12063380.iso": "166d99b85390d58017dc0bef14e5f8eb",
-    "en_windows_10_multi-edition_version_1709_updated_sept_2017_x64_dvd_100090817.iso": "5e8bdef20c4b468f868f1f579197f7cf",
-    "en_windows_10_multi-edition_version_1709_updated_sept_2017_x86_dvd_100090818.iso": "98b59f9927eb0aecc10526e08c70f907",
-    "en_windows_10_multiple_editions_version_1703_updated_march_2017_x64_dvd_10189288.iso": "effccfda8a8dcf0b91bb3878702ae2d8",
-    "en_windows_10_multiple_editions_version_1703_updated_march_2017_x86_dvd_10188977.iso": "6c8bd404dd95a286b3b3ef3a90e2cb34",
-    "en_windows_10_multiple_editions_version_1607_updated_jan_2017_x64_dvd_9714399.iso": "2d738dcde0fadec9dd687363bc9c98e8",
-    "en_windows_10_multiple_editions_version_1607_updated_jan_2017_x86_dvd_9714393.iso": "f17f69a8fb6df79d83939811ac38dfee",
-    "en_windows_10_multiple_editions_version_1511_updated_apr_2016_x64_dvd_8705583.iso": "3ca03a2c59ae5b58ca965a345d4f2ae1",
-    "en_windows_10_multiple_editions_version_1511_updated_apr_2016_x86_dvd_8735185.iso": "91565f54dc7a4e1df8a5f2b913d869b1",
-    "en_windows_10_multiple_editions_x64_dvd_6846432.iso": "23e397a21a9e01f141c64b7e1260314a",
-    "en_windows_10_multiple_editions_x86_dvd_6848465.iso": "99feb0f9e7262b7eefa460840a31b59d",
-    "en_windows_7_professional_with_sp1_x64_dvd_u_676939.iso": "ed15956fe33c13642a6d2cb2c7aa9749",
-    "en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso": "0bff99c8310ba12a9136e3d23606f3d4",
-    "en_windows_7_professional_x64_dvd_x15-65805.iso": "7b7af5fe3a01e9fd76de4dacb45a796b",
-    "en_windows_7_professional_x86_dvd_x15-65804.iso": "d8f675aaeb48057452666b0cd686d7f5",
-    "en_windows_8.1_with_update_x64_dvd_6051480.iso": "e0d4594e56c0545d379340e0db9519a5",
-    "en_windows_8.1_with_update_x86_dvd_6051550.iso": "46ce6553a0e0abc264b77c1fc59dfb29",
-    "en_windows_8_1_x64_dvd_2707217.iso": "f104b78019e86e74b149ae5e510f7be9",
-    "en_windows_8_1_x86_dvd_2707392.iso": "7dd36fea0d004acfedbdb3a5521ef5ff",
-    "en_windows_8_x64_dvd_915440.iso": "0e8f2199fae18fe510c23426e68f675a",
-    "en_windows_8_x86_dvd_915417.iso": "4252407333706df89a0c654924dd3f06",
-    "en_windows_server_2008_r2_with_sp1_x64_dvd_617601.iso": "8dcde01d0da526100869e2457aafb7ca",
-    "en_windows_server_2008_r2_x64_dvd_x15-50365.iso": "0ffbae83327f0ad8c2ab4d5dfa754c09",
-    "en_windows_server_2012_r2_with_update_x64_dvd_6052708.iso": "78bff6565f178ed08ab534397fe44845",
-    "en_windows_server_2012_r2_x64_dvd_2707946.iso": "0e7c09aab20dec3cd7eab236dab90e78",
-    "en_windows_server_2012_x64_dvd_915478.iso": "da91135483e24689bfdaf05d40301506",
-    "en_windows_server_2016_x64_dvd_9718492.iso": "e02d2e482b0f3dab915435e9040c13b4",
-    "en_windows_server_2019_x64_dvd_4cb967d8.iso": "a876d230944abe3bf2b5c2b40da6c4a3",
-    "en_windows_server_version_1709_x64_dvd_100090904.iso": "7c73ce30c3975652262f794fc35127b5",
-    "en_windows_server_version_1803_x64_dvd_12063476.iso": "e34b375e0b9438d72e6305f36b125406",
-    "en_windows_server_version_1809_x64_dvd_92d11ba1.iso": "ce9c3869558a42a1f24d97d8b599b8f0"
+    "en_windows_10_consumer_edition_version_1809_updated_sept_2018_x64_dvd_491ea967.iso": 
+    {
+        "md5": "7a19f70f948614b55b716a6ee0ca5274",
+        "install_index": "1"
+    },
+    "en_windows_10_consumer_edition_version_1809_updated_sept_2018_x86_dvd_c5960600.iso": 
+    {
+        "md5": "663e18f44a8e799f538d8c6ed5d4f520",
+        "install_index": "1"
+    },
+    "en_windows_10_consumer_editions_version_1803_updated_march_2018_x64_dvd_12063379.iso": 
+    {
+        "md5": "986e2e17cf6b0b49141cd15699768e6e",
+        "install_index": "1"
+    },
+    "en_windows_10_consumer_editions_version_1803_updated_march_2018_x86_dvd_12063380.iso": 
+    {
+        "md5": "166d99b85390d58017dc0bef14e5f8eb",
+        "install_index": "1"
+    },
+    "en_windows_10_multi-edition_version_1709_updated_sept_2017_x64_dvd_100090817.iso": 
+    {
+        "md5": "5e8bdef20c4b468f868f1f579197f7cf",
+        "install_index": "1"
+    },
+    "en_windows_10_multi-edition_version_1709_updated_sept_2017_x86_dvd_100090818.iso": 
+    {
+        "md5": "98b59f9927eb0aecc10526e08c70f907",
+        "install_index": "1"
+    },
+    "en_windows_10_multiple_editions_version_1703_updated_march_2017_x64_dvd_10189288.iso": 
+    {
+        "md5": "effccfda8a8dcf0b91bb3878702ae2d8",
+        "install_index": "1"
+    },
+    "en_windows_10_multiple_editions_version_1703_updated_march_2017_x86_dvd_10188977.iso": 
+    {
+        "md5": "6c8bd404dd95a286b3b3ef3a90e2cb34",
+        "install_index": "1"
+    },
+    "en_windows_10_multiple_editions_version_1607_updated_jan_2017_x64_dvd_9714399.iso": 
+    {
+        "md5": "2d738dcde0fadec9dd687363bc9c98e8",
+        "install_index": "1"
+    },
+    "en_windows_10_multiple_editions_version_1607_updated_jan_2017_x86_dvd_9714393.iso": 
+    {
+        "md5": "f17f69a8fb6df79d83939811ac38dfee",
+        "install_index": "1"
+    },
+    "en_windows_10_multiple_editions_version_1511_updated_apr_2016_x64_dvd_8705583.iso": 
+    {
+        "md5": "3ca03a2c59ae5b58ca965a345d4f2ae1",
+        "install_index": "1"
+    },
+    "en_windows_10_multiple_editions_version_1511_updated_apr_2016_x86_dvd_8735185.iso": 
+    {
+        "md5": "91565f54dc7a4e1df8a5f2b913d869b1",
+        "install_index": "1"
+    },
+    "en_windows_10_multiple_editions_x64_dvd_6846432.iso": 
+    {
+        "md5": "23e397a21a9e01f141c64b7e1260314a",
+        "install_index": "1"
+    },
+    "en_windows_10_multiple_editions_x86_dvd_6848465.iso": 
+    {
+        "md5": "99feb0f9e7262b7eefa460840a31b59d",
+        "install_index": "1"
+    },
+    "en_windows_7_professional_with_sp1_x64_dvd_u_676939.iso": 
+    {
+        "md5": "ed15956fe33c13642a6d2cb2c7aa9749",
+        "install_index": "3"
+    },
+    "en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso": 
+    {
+        "md5": "0bff99c8310ba12a9136e3d23606f3d4",
+        "install_index": "4"
+    },
+    "en_windows_7_professional_x64_dvd_x15-65805.iso": 
+    {
+        "md5": "7b7af5fe3a01e9fd76de4dacb45a796b",
+        "install_index": "3"
+    },
+    "en_windows_7_professional_x86_dvd_x15-65804.iso": 
+    {
+        "md5": "d8f675aaeb48057452666b0cd686d7f5",
+        "install_index": "4"
+    },
+    "en_windows_8.1_with_update_x64_dvd_6051480.iso": 
+    {
+        "md5": "e0d4594e56c0545d379340e0db9519a5",
+        "install_index": "1"
+    },
+    "en_windows_8.1_with_update_x86_dvd_6051550.iso": 
+    {
+        "md5": "46ce6553a0e0abc264b77c1fc59dfb29",
+        "install_index": "1"
+    },
+    "en_windows_8_1_x64_dvd_2707217.iso": 
+    {
+        "md5": "f104b78019e86e74b149ae5e510f7be9",
+        "install_index": "1"
+    },
+    "en_windows_8_1_x86_dvd_2707392.iso": 
+    {
+        "md5": "7dd36fea0d004acfedbdb3a5521ef5ff",
+        "install_index": "1"
+    },
+    "en_windows_8_x64_dvd_915440.iso": 
+    {
+        "md5": "0e8f2199fae18fe510c23426e68f675a",
+        "install_index": "1"
+    },
+    "en_windows_8_x86_dvd_915417.iso": 
+    {
+        "md5": "4252407333706df89a0c654924dd3f06",
+        "install_index": "1"
+    },
+    "en_windows_server_2008_r2_with_sp1_x64_dvd_617601.iso": 
+    {
+        "md5": "8dcde01d0da526100869e2457aafb7ca",
+        "install_index": "1"
+    },
+    "en_windows_server_2008_r2_x64_dvd_x15-50365.iso": 
+    {
+        "md5": "0ffbae83327f0ad8c2ab4d5dfa754c09",
+        "install_index": "1"
+    },
+    "en_windows_server_2012_r2_with_update_x64_dvd_6052708.iso": 
+    {
+        "md5": "78bff6565f178ed08ab534397fe44845",
+        "install_index": "2"
+    },
+    "en_windows_server_2012_r2_x64_dvd_2707946.iso": 
+    {
+        "md5": "0e7c09aab20dec3cd7eab236dab90e78",
+        "install_index": "2"
+    },
+    "en_windows_server_2012_x64_dvd_915478.iso": 
+    {
+        "md5": "da91135483e24689bfdaf05d40301506",
+        "install_index": "2"
+    },
+    "en_windows_server_2016_x64_dvd_9718492.iso": 
+    {
+        "md5": "e02d2e482b0f3dab915435e9040c13b4",
+        "install_index": "2"
+    },
+    "en_windows_server_2019_x64_dvd_4cb967d8.iso": 
+    {
+        "md5": "a876d230944abe3bf2b5c2b40da6c4a3",
+        "install_index": "2"
+    },
+    "en_windows_server_version_1709_x64_dvd_100090904.iso": 
+    {
+        "md5": "7c73ce30c3975652262f794fc35127b5",
+        "install_index": "1"
+    },
+    "en_windows_server_version_1803_x64_dvd_12063476.iso": 
+    {
+        "md5": "e34b375e0b9438d72e6305f36b125406",
+        "install_index": "1"
+    },
+    "en_windows_server_version_1809_x64_dvd_92d11ba1.iso": 
+    {
+        "md5": "ce9c3869558a42a1f24d97d8b599b8f0",
+        "install_index": "1"
+    }
 }
 

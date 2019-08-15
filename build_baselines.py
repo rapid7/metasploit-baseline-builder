@@ -145,7 +145,7 @@ def parse_iso(file_name):
     }
 
 
-def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
+def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", index = "1"):
     global esxi_file
 
     os_types_vmware = {
@@ -213,7 +213,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = ""):
         "vm_name": prependString + vm_name
     })
 
-    autounattend = create_autounattend(vm_name, os_parts, prependString=prependString)
+    autounattend = create_autounattend(vm_name, os_parts, index=index, prependString=prependString)
 
     os_type = os_types_vmware[os_parts['version']]
     if os_parts['arch'] == 'x86':
@@ -304,7 +304,7 @@ def main(argv):
 
             results = []
             for file_name in iso_map:
-                pool.apply_async(build_base, [file_name, iso_map[file_name], replace_vms, vmServer, prependString], callback=results.append)
+                pool.apply_async(build_base, [file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index']], callback=results.append)
 
             with tqdm(total=len(iso_map)) as progress:
                 current_len = 0
@@ -319,7 +319,7 @@ def main(argv):
         else:
             signal.signal(signal.SIGINT, original_sigint_handler)
             for file_name in tqdm(iso_map):
-                build_base(file_name, iso_map[file_name], replace_vms, vmServer, prependString)
+                build_base(file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index'])
 
     except KeyboardInterrupt:
         print("User cancel received, terminating all builds")
