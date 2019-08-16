@@ -26,22 +26,27 @@ def vm_as_cpe_string(vm_name):
             "vendor" : "canonical",
             "product" : "ubuntu_linux",
             "version_pattern" : ".*ubuntu(\d+).*",
-            "postfix" : ":"
+            "update" : ""
         },
         "fedora" : {
             "vendor" : "fedoraproject",
             "product" : "fedora",
             "version_pattern" : ".*fedora(\d+).*",
-            "postfix" : ":"
+            "update" : ""
         },
         "centos" : {
             "vendor" : "centos",
             "product" : "centos",
             "version_pattern" : ".*centos(\d+).*",
-            "postfix" : ":"
+            "update" : ""
         }
     }
 
+    if "x64" in vm_name:
+        arch = "x64"
+    else:
+        arch = "x86"
+        
     vm_name = vm_name[vm_name.index("linux") + len("linux"):]
     os_pattern = re.compile("[a-z]+")
     os_name = os_pattern.match(vm_name)
@@ -57,7 +62,8 @@ def vm_as_cpe_string(vm_name):
         if "ubuntu" in os_name:
             version = version[:2] + "." + version[2:]
 
-        cpe_str = "cpe:/o:" + ":".join([cpe_parts[os_name]['vendor'], cpe_parts[os_name]['product'], version, cpe_parts[os_name]['postfix']])
+        cpe_str = ":".join(["cpe:/o", cpe_parts[os_name]['vendor'], cpe_parts[os_name]['product'],
+                           version, cpe_parts[os_name]['update'], arch])
 
         return cpe_str
     else: exit
