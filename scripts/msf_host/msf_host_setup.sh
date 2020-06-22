@@ -47,7 +47,8 @@ su ${SSH_USERNAME} -c "/bin/bash -l -c 'rvm autolibs disable && \
   rvm ${RUBY_VERSION} do gem install bundler -v 1.17.3 --no-document && \
   rvm cleanup all'"
 
-su ${SSH_USERNAME} -c 'git remote add upstream https://github.com/rapid7/metasploit-framework && \
+su ${SSH_USERNAME} -c 'cd ~/rapid7/metasploit-framework && \
+  git remote add upstream https://github.com/rapid7/metasploit-framework && \
   /bin/bash -l -c "ruby tools/dev/add_pr_fetch.rb" && \
   git config --global user.name   "Metasploit Tesing Lab User" && \
   git config --global user.email  "IamNotReal@findthe.robot" && \
