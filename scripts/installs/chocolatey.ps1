@@ -43,8 +43,16 @@ function Invoke-CLR4PowerShellCommand {
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-Invoke-CLR4PowerShellCommand -ScriptBlock {
- [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+$isWin8 = wmic os get caption | find /i '" 8 "'
+$isWin2012 = wmic os get caption | find /i '" 2012 "'
+
+# skip wrapping for 8 or 2012?
+if ($isWin8 -or $isWin2012){
+   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+}else{
+    Invoke-CLR4PowerShellCommand -ScriptBlock {
+       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+    }
 }
 
 # cribbed from https://gist.github.com/jstangroome/882528
