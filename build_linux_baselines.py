@@ -12,7 +12,7 @@ from lib import packerMod
 from lib import serverHelper
 
 
-def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmServer=None, prependString = ""):
+def build_base(packer_var_file, common_vars, packerfile, factory_image, replace_existing, vmServer=None, prependString = ""):
     TEMP_DIR="tmp"
 
     vm_name = packer_var_file.strip(".json")
@@ -38,7 +38,9 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
     })
 
     packer_vars.update(common_vars)
-
+    if factory_image:
+        del packer_vars["custom_script"]
+        
     packer_obj = packerMod(packerfile)
     packer_obj.update_linux_config(packer_vars)
 
@@ -89,26 +91,32 @@ def main(argv):
 
     prependString = ""
     replace_vms = False
+    factory_image = False
     esxi_file = "esxi_config.json"
 
     try:
-        opts, args = getopt.getopt(argv[1:], "c:hp:r", ["prependString="])
+        opts, args = getopt.getopt(argv[1:], "c:fhp:r", ["esxiConfig=", "factory", "help", "prependString=", "replace"])
     except getopt.GetoptError:
         print argv[0] + ' -n <numProcessors>'
         sys.exit(2)
     for opt, arg in opts:
-        if opt == '-h':
+        if opt in ("-h", "--help"):
             print argv[0] + " [options]"
-            print '-c <file>, --esxiConfig=<file>   use alternate hypervisor config file'
-            print '-p <string>, --prependString=<file>   prepend string to the beginning of VM names'
-            print '-r, --replace                     replace existing msf_host'
+            print '-c <file>, --esxiConfig=<file>       use alternate hypervisor config file'
+            print '-f, --factory                   builds system without additional packages'
+            print '-p <string>, --prependString=<file>  prepend string to the beginning of VM names'
+            print '-r, --replace                        replace existing msf_host'
             sys.exit()
         elif opt in ("-c", "--esxiConfig"):
             esxi_file = arg
+        elif opt in ("-f", "--factory"):
+            factory_image = True # Equivolent to noSoftware. -ns was not a valid short flag with getopt.
         elif opt in ("-p", "--prependString"):
             prependString = arg
         elif opt in ("-r", "--replace"):
             replace_vms = True
+
+        
 
     vm_server = serverHelper(esxi_file)
 
@@ -129,7 +137,7 @@ def main(argv):
 
             print "\nBuilding " + str(len(targets)) + " " + os_dir.capitalize() + " baselines:"
             for target in tqdm(targets):
-                build_base(target, common_vars, packer_file, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
+                build_base(target, common_vars, packer_file, factory_image, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
 
             os.chdir("../")
 
