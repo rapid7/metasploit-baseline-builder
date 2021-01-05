@@ -145,7 +145,7 @@ def parse_iso(file_name):
     }
 
 
-def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", index = "1"):
+def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", index = "1", factory_image = False):
     global esxi_file
 
     os_types_vmware = {
@@ -196,7 +196,6 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", in
     }
 
     packer_obj = packerMod(packerfile)
-
     # if an esxi_config file is found add to the packer file params needed for esxi
     if vmServer.get_esxi() is not None:
         packer_vars.update(vmServer.get_config())
@@ -207,6 +206,14 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", in
                     })
 
     packerfile = os.path.join(temp_path, "current_packer.json")
+
+    if factory_image:
+        # Software we don't want on our factory image
+        software = ["python", "java", "ruby"]
+        for provisioner in packer_obj.local_packer['provisioners']:
+            if any(x in str(provisioner.values()) for x in software):
+                provisioner['except'] = only
+
     packer_obj.save_config(packerfile)
 
     packer_vars.update({
@@ -258,26 +265,30 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", in
 def main(argv):
     num_processors = 1
     prependString = ""
+    factory_image = False
     replace_vms = False
 
     try:
-        opts, args = getopt.getopt(argv[1:], "c:hn:p:r", ["numProcessors="])
+        opts, args = getopt.getopt(argv[1:], "c:fhn:p:r", ["esxiConfig=", "factory", "help", "numProcessors=", "prependString=", "replace"])
     except getopt.GetoptError:
         print argv[0] + ' -n <numProcessors>'
         sys.exit(2)
     for opt, arg in opts:
-        if opt == '-h':
+        if opt in ("-h", "--help"):
             print argv[0] + " [options]"
-            print '-c <file>, --esxiConfig=<file>   use alternate hypervisor config file'
-            print '-n <int>, --numProcessors=<int>   execute <int> parallel builds'
-            print '-p <string>, --prependString=<file>   prepend string to the beginning of VM names'
-            print '-r, --replace                     replace existing baselines'
+            print '-c <file>, --esxiConfig=<file>       use alternate hypervisor config file'
+            print '-f, --factory                        builds system without additional packages'
+            print '-n <int>, --numProcessors=<int>      execute <int> parallel builds'
+            print '-p <string>, --prependString=<file>  prepend string to the beginning of VM names'
+            print '-r, --replace                        replace existing baselines'
             sys.exit()
-        elif opt in ("-n", "--numProcessors"):
-            num_processors = int(arg)
         elif opt in ("-c", "--esxiConfig"):
             global esxi_file
             esxi_file = arg
+        elif opt in ("-f", "--factory"):
+            factory_image = True # Build with minimum required software, users and vm tools.
+        elif opt in ("-n", "--numProcessors"):
+            num_processors = int(arg)
         elif opt in ("-p", "--prependString"):
             prependString = arg
         elif opt in ("-r", "--replace"):
@@ -304,7 +315,7 @@ def main(argv):
 
             results = []
             for file_name in iso_map:
-                pool.apply_async(build_base, [file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index']], callback=results.append)
+                pool.apply_async(build_base, [file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index']], factory_image, callback=results.append)
 
             with tqdm(total=len(iso_map)) as progress:
                 current_len = 0
@@ -319,7 +330,7 @@ def main(argv):
         else:
             signal.signal(signal.SIGINT, original_sigint_handler)
             for file_name in tqdm(iso_map):
-                build_base(file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index'])
+                build_base(file_name, iso_map[file_name]['md5'], replace_vms, vmServer, prependString, iso_map[file_name]['install_index'], factory_image)
 
     except KeyboardInterrupt:
         print("User cancel received, terminating all builds")
