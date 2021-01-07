@@ -12,7 +12,7 @@ from lib import packerMod
 from lib import serverHelper
 
 
-def build_base(packer_var_file, common_vars, packerfile, factory_image, replace_existing, vmServer=None, prependString = ""):
+def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmServer=None, prependString = "", factory_image = false):
     TEMP_DIR="tmp"
 
     vm_name = packer_var_file.strip(".json")
@@ -103,20 +103,18 @@ def main(argv):
         if opt in ("-h", "--help"):
             print argv[0] + " [options]"
             print '-c <file>, --esxiConfig=<file>       use alternate hypervisor config file'
-            print '-f, --factory                   builds system without additional packages'
+            print '-f, --factory                        builds system without additional packages'
             print '-p <string>, --prependString=<file>  prepend string to the beginning of VM names'
             print '-r, --replace                        replace existing msf_host'
             sys.exit()
         elif opt in ("-c", "--esxiConfig"):
             esxi_file = arg
         elif opt in ("-f", "--factory"):
-            factory_image = True # Equivolent to noSoftware. -ns was not a valid short flag with getopt.
+            factory_image = True # Build with minimum required software, users and vm tools.
         elif opt in ("-p", "--prependString"):
             prependString = arg
         elif opt in ("-r", "--replace"):
             replace_vms = True
-
-        
 
     vm_server = serverHelper(esxi_file)
 
@@ -137,7 +135,7 @@ def main(argv):
 
             print "\nBuilding " + str(len(targets)) + " " + os_dir.capitalize() + " baselines:"
             for target in tqdm(targets):
-                build_base(target, common_vars, packer_file, factory_image, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString)
+                build_base(target, common_vars, packer_file, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString, factory_iamge)
 
             os.chdir("../")
 
