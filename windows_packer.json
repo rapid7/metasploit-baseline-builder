@@ -115,7 +115,6 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "./scripts/configs/update_root_certs.bat",
-        "./scripts/configs/vagrant-ssh.bat",
         "./scripts/configs/disable-auto-logon.bat",
         "./scripts/configs/enable-rdp.bat"
       ]
@@ -134,6 +133,7 @@
     {
       "type":"powershell",
       "scripts": [
+        "./scripts/configs/vagrant-ssh.ps1",
         "./scripts/installs/chocolatey.ps1"
       ]
     },
