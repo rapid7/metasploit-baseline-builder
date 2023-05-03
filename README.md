@@ -35,7 +35,7 @@ python build_baselines.py [options]
 python build_msf_host.py [options]
 ```
 
-### WMWare ESXI (vsphere)
+### VMWare ESXI (vsphere)
 Create an `esxi_config.json` with the required parameters.
 ```
 {
