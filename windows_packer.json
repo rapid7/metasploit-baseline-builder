@@ -20,7 +20,6 @@
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
         "./scripts/installs/openssh.ps1",
-        "./scripts/installs/install_net45.ps1",
         "./resources/certs/oracle-cert.cer",
         "./resources/certs/gdig2.crt",
         "./resources/certs/comodorsadomainvalidationsecureserverca.crt",
@@ -66,7 +65,6 @@
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
         "./scripts/installs/openssh.ps1",
-        "./scripts/installs/install_net45.ps1",
         "./resources/certs/oracle-cert.cer",
         "./resources/certs/gdig2.crt",
         "./resources/certs/comodorsadomainvalidationsecureserverca.crt",
@@ -99,6 +97,16 @@
   ],
 "provisioners": [
     {
+        "type": "shell-local",
+        "only_on": ["linux", "darwin"],
+        "inline": ["cd resources && resources/download-windows-files.sh"]
+    },
+    {
+        "type": "shell-local",
+        "only_on": ["windows"],
+        "inline": ["cd resources && powershell resources/download-windows-files.ps1"]
+    },
+    {
       "type": "file",
       "source": "scripts",
       "destination": "C:/vagrant",
@@ -115,9 +123,27 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "./scripts/configs/update_root_certs.bat",
-        "./scripts/configs/disable-auto-logon.bat",
         "./scripts/configs/enable-rdp.bat"
       ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "{{user `scripts_dir`}}/installs/install_dotnet45.ps1"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "{{user `scripts_dir`}}/installs/install_wmf.ps1"
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "pause_before": "180s"
     },
     {
       "type": "windows-shell",
@@ -145,6 +171,8 @@
       "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
+        "scripts/configs/disable-auto-logon.bat",
+        "scripts/chocolatey_installs/chocolatey-compatibility.bat",
         "scripts/installs/install_boxstarter.bat",
         "scripts/chocolatey_installs/7zip.bat",
         "scripts/configs/apply_password_settings.bat",
@@ -161,7 +189,7 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/chocolatey_installs/java.bat",
-        "scripts/installs/install_ruby.bat"
+        "scripts/chocolatey_installs/ruby.bat"
       ]
     },
     {
