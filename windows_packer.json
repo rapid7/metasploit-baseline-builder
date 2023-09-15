@@ -2,8 +2,9 @@
   "builders": [
     {
       "type": "vmware-iso",
+      "vnc_over_websocket": true,
+      "insecure_connection": true,
       "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "output_directory": "./tmp/{{user `vm_name`}}-vmware-iso",
       "headless": false,
@@ -47,7 +48,6 @@
     {
       "type": "virtualbox-iso",
       "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "output_directory": "./tmp/{{user `vm_name`}}-virtualbox-iso",
       "headless": false,
@@ -99,12 +99,12 @@
     {
         "type": "shell-local",
         "only_on": ["linux", "darwin"],
-        "inline": ["cd resources && resources/download-windows-files.sh"]
+        "inline": ["cd resources && ./download-windows-files.sh"]
     },
     {
         "type": "shell-local",
         "only_on": ["windows"],
-        "inline": ["cd resources && powershell resources/download-windows-files.ps1"]
+        "inline": ["cd resources && powershell ./download-windows-files.ps1"]
     },
     {
       "type": "file",
@@ -129,7 +129,7 @@
     {
       "type": "powershell",
       "scripts": [
-        "{{user `scripts_dir`}}/installs/install_dotnet45.ps1"
+        "./scripts/installs/install_net45.ps1"
       ]
     },
     {
@@ -138,7 +138,7 @@
     {
       "type": "powershell",
       "scripts": [
-        "{{user `scripts_dir`}}/installs/install_wmf.ps1"
+        "./scripts/installs/install_wmf.ps1"
       ]
     },
     {

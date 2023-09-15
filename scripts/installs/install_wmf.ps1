@@ -6,20 +6,57 @@ function LogWrite {
    Write-Host $logstring
 }
 
+$is_64bit = [IntPtr]::size -eq 8
+$isWin7 = wmic os get caption | find /i '" 7 "'
+$isWin2008r2 = wmic os get caption | find /i '" 2008 R2 "'
+$isWin8 = wmic os get caption | find /i '" 8 "'
+$isWin81 = wmic os get caption | find /i '" 8.1 "'
+$isWin2012 = wmic os get caption | find /i '" 2012 "'
+$isWin2012r2 = wmic os get caption | find /i '" 2012 R2"'
+
+if (!($isWin7 -r $isWin8 -or $isWin81 -or $isWin2012 -or $isWin2012)){
+  LogWrite "Skipping WMF 5.1 install not required for OS"
+  exit 0
+}
+
 
 LogWrite "Extracting Archive..."
 
-$extractLocation = "C:\vagrant\resources\windows_pre_downloads\wmf_install"
+$filesLocation = "C:\vagrant\resources\windows_pre_downloads"
+$extractLocation = ${filesLocation} + "\wmf_install"
 New-Item -Path $extractLocation -ItemType Directory
 
 $shell = New-Object -ComObject shell.application
-$zip = $shell.NameSpace("C:\vagrant\resources\windows_pre_downloads\wmf.zip")
+if (is_64bit) {
+  $zip = $shell.NameSpace(${filesLocation} + "\Win7AndW2K8R2-KB3191566-x64.zip")
+} else {
+  $zip = $shell.NameSpace(${filesLocation} + "\Win7-KB3191566-x86.zip")
+}
+
 foreach ($item in $zip.items()) {
   $shell.Namespace($extractLocation).CopyHere($item)
 }
 
 Set-Location -Path $extractLocation -PassThru
-$installCmd = "powershell.exe -ExecutionPolicy Bypass -Command " + '"' + ${extractLocation} + "\Install-WMF5.1.ps1 -AcceptEula" + '"'
+# Windows 8.1, 2012, and 2012 R2
+if ($isWin81 -or $isWin2012r2){
+  if ($is_64bit){
+    $extractLocation = ${filesLocation} + "\Win8.1AndW2K12R2-KB3191564-x64.msu"  
+  } else {
+    $extractLocation = ${filesLocation} + "\Win8.1-KB3191564-x86.msu"
+  }
+}else{
+  if ($isWin2012) {
+    $extractLocation = ${filesLocation} + "\W2K12-KB3191565-x64.msu"
+  }
+}
+
+# Windows 7 and 2008 R2 
+if ($isWin7 -or $isWin2008r2){
+  $installCmd = "powershell.exe -ExecutionPolicy Bypass -Command " + '"' + ${extractLocation} + "\Install-WMF5.1.ps1 -AcceptEula" + '"'
+}else{
+  $installCmd = "powershell.exe -ExecutionPolicy Bypass -Command " + '"' + ${extractLocation} + " /quiet /norestart" + '"'
+}
 
 LogWrite "Starting installation process..."
 
