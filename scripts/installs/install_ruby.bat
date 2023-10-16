@@ -1,2 +1,2 @@
-choco install -y ruby --version 2.3.3
+choco install -y ruby --version 2.7.0
 refreshenv
