@@ -37,7 +37,9 @@ RUN su jenkins -c "/bin/bash -l -c '\
   python -m pip install --upgrade cpe-utils && \
   python -m pip install --upgrade pyvmomi && \
   python -m pip install --upgrade vm-automation && \
-  python -m pip install --upgrade tqdm'"
+  python -m pip install --upgrade tqdm && \
+  python -m pip install --upgrade python-packer && \
+  python -m pip install -- upgrade requests'"
 
 VOLUME "$JENKINS_HOME"
 RUN chown -R jenkins "$JENKINS_HOME"
