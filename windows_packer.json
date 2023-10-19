@@ -19,7 +19,6 @@
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
         "./scripts/installs/openssh.ps1",
-        "./scripts/installs/install_net45.ps1",
         "./scripts/installs/install_net48.ps1",
         "./resources/certs/oracle-cert.cer",
         "./resources/certs/gdig2.crt",
@@ -66,7 +65,6 @@
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
         "./scripts/installs/openssh.ps1",
-        "./scripts/installs/install_net45.ps1",
         "./scripts/installs/install_net48.ps1",
         "./resources/certs/oracle-cert.cer",
         "./resources/certs/gdig2.crt",
@@ -99,6 +97,16 @@
     }
   ],
 "provisioners": [
+    {
+        "type": "shell-local",
+        "only_on": ["linux", "darwin"],
+        "inline": ["cd {{user `scripts_dir`}}/pre_downloads/windows && {{user `scripts_dir`}}/pre_downloads/windows/vmware-tools.sh"]
+    },
+    {
+        "type": "shell-local",
+        "only_on": ["windows"],
+        "inline": ["cd {{user `scripts_dir`}}/pre_downloads/windows && powershell {{user `scripts_dir`}}/pre_downloads/windows/vmware-tools.ps1"]
+    },
     {
       "type": "file",
       "source": "scripts",
@@ -198,5 +206,9 @@
       "output": "{{user `output`}}",
       "vagrantfile_template": "{{user `vagrantfile_template`}}"
     }
-  ]
+  ],
+  "variables": {
+    "repo_root_dir": "{{template_dir}}/../../",
+    "scripts_dir": "{{user `repo_root_dir`}}/scripts"
+  }
 }
