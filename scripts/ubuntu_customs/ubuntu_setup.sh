@@ -22,7 +22,7 @@ apt-get update && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-	RUBY_VERSION='2.3.3'
+	RUBY_VERSION='2.7.8'
 	su ${SSH_USERNAME} -c 'command curl -sSL https://rvm.io/mpapis.asc | gpg --import - && \
 	  command curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - && \
 	  curl -L -sSL https://get.rvm.io | bash -s stable  --without-gems="rvm rubygems-bundler"'
