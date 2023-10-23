@@ -56,7 +56,7 @@ def build_base(packer_var_file, replace_existing, vmServer=None, prependString =
         else:
             return p  # just return without exec since ret value is not checked anyways
 
-    p.build(parallel=True, debug=False, force=False)
+    p.build(parallel=False, debug=True, force=False)
 
     if vmServer.get_esxi() is not None:
         vm = vmServer.get_vm(prependString + vm_name)
