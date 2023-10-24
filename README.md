@@ -12,10 +12,7 @@ Prior to usage of the utility provided here the following must be obtained or co
 
 ## Installation
 ```
-pip install cpe-utils
-pip install python-packer
-pip install tqdm
-pip install vm-automation
+pip install -r requirements.txt
 ````
 
 ## Usage
@@ -111,11 +108,9 @@ python build_msf_host.py [options]
 ```
 
 ## Docker Environment
-Create a local user `jenkins` with UID=1001
-
+From the root directory:
 ```
-cd docker
-docker build -t rapid7/build:payload-lab .
+docker build -t rapid7/build:payload-lab -f docker/Dockerfile .
 ```
 
 To execute the build process:

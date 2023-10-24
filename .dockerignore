@@ -1,0 +1,3 @@
+# Ignore everything apart from the files we explicitely specify.
+*
+!requirements.txt

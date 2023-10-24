@@ -1,4 +1,6 @@
-cpe-utils
-vm-automation ~= 0.1.7
-python-packer ~= 0.1.2
-tqdm
+cpe-utils == 0.1.0
+vm-automation == 0.1.8
+python-packer == 0.1.2
+tqdm == 4.64.1
+requests == 2.27.1
+pyvmomi == 8.0.2.0
