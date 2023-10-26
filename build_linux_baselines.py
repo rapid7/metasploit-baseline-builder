@@ -74,7 +74,7 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
             return p  # just return without exec since ret value is not checked anyways
 
     try:
-        p.build(parallel=True, debug=False, force=False)
+        p.build(parallel=False, debug=False, force=False)
     except sh.ErrorReturnCode:
         print "Error: build of " + prependString + vm_name + " returned non-zero"
         return p
