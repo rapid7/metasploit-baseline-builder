@@ -6,7 +6,7 @@ function install_open_vm_tools {
     echo "==> Installing Open VM Tools"
     # Install open-vm-tools so we can mount shared folders
     #dpkg --configure -a
-    apt-get install -y open-vm-tools-lts-trusty
+    apt-get install -y open-vm-tools
     # Install open-vm-tools-desktop so we can copy/paste, resize, etc.
     if [[ "$DESKTOP" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]]; then
         apt-get install -y open-vm-tools-desktop
