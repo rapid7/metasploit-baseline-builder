@@ -13,6 +13,7 @@
     "update_url_template": "http://old-releases.ubuntu.com/releases/VERSION",
     "url_base_common": ".com/",
     "file_patterns": [
-      "ubuntu1[468]04.json"
+      "ubuntu1[468]04.json",
+      "ubuntu2[0]04.json"
     ]
 }
