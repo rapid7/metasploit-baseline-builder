@@ -13,14 +13,20 @@ apt-get update && \
 	apt-get dist-upgrade -y && \
 	apt-get -y install software-properties-common && \
 	apt-get -y install \
-		gpgv2 python-pip python2.7 \
+		gpgv2 python2.7 \
 		bison flex gcc gcc-multilib jam make wget \
 		openssl zlib1g-dev libreadline-gplv2-dev libssl-dev \
 		ruby rake bundler git && \
 	apt-get -y install openjdk-7-jdk || apt-get -y install openjdk-8-jdk && \
-	apt-get -y install libssl1.0-dev || apt-get -y install libssl1-dev && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+  # For Ubuntu 20, python-pip isn't available in apt repos out of the box. Get it with a script for Python 2.7 instead.
+  curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+  sudo python2.7 get-pip.py
+
+  # If it fails, assume we already have libssl-dev installed.
+	apt-get -y install libssl1.0-dev libssl1-dev 2>/dev/null
 
 	RUBY_VERSION='2.7.8'
 	su ${SSH_USERNAME} -c 'command curl -sSL https://rvm.io/mpapis.asc | gpg --import - && \
