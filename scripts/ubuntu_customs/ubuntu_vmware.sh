@@ -12,7 +12,7 @@ function install_open_vm_tools {
         apt-get install -y open-vm-tools-desktop
     fi
     # Add /mnt/hgfs so the mount works automatically with Vagrant
-    mkdir /mnt/hgfs
+    mkdir -p /mnt/hgfs
 }
 
 function install_vmware_tools {

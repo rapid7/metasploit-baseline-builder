@@ -9,7 +9,7 @@ function install_open_vm_tools {
     yum --enablerepo=extras install -y epel-release
     yum install -y open-vm-tools
     # Add /mnt/hgfs so the mount works automatically with Vagrant
-    mkdir /mnt/hgfs
+    mkdir -p /mnt/hgfs
 }
 
 if [[ $PACKER_BUILDER_TYPE =~ vmware ]]; then
