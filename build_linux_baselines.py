@@ -120,6 +120,17 @@ def main(argv):
 
     os.chdir("boxcutter")
 
+    legacy_installers = [
+        "ubuntu1404.json",
+        "ubuntu1404-desktop.json",
+        "ubuntu1604.json",
+        "ubuntu1604-desktop.json",
+        "ubuntu1804.json",
+        "ubuntu1804-desktop.json",
+        "ubuntu2004.json",
+        "ubuntu2004-desktop.json"
+    ]
+
     for os_dir in os.listdir("."):
         if os.path.isdir(os.path.join(".", os_dir)):
             common_var_file = os.path.join("..", "linux_vars", os_dir + "_common.json")
@@ -127,7 +138,6 @@ def main(argv):
                 common_vars = json.load(common_var_source)
 
             os.chdir(os.path.join("", os_dir))
-            packer_file = os_dir + ".json"
 
             targets = []
             for pattern in common_vars['file_patterns']:
@@ -135,6 +145,11 @@ def main(argv):
 
             print "\nBuilding " + str(len(targets)) + " " + os_dir.capitalize() + " baselines:"
             for target in tqdm(targets):
+                if target in legacy_installers:
+                    packer_file = os_dir + "-legacy.json"
+                else:
+                    packer_file = os_dir + ".json"
+
                 build_base(target, common_vars, packer_file, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString, factory_image=factory_image)
 
             os.chdir("../")
