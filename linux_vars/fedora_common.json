@@ -12,7 +12,8 @@
     "url_base_common": "/releases/",
     "file_patterns": [
       "fedora[1-9][1-9].json",
-      "fedora[1-9]*-server.json"
+      "fedora[1-9][1-9]-ws.json",
+      "fedora[1-9][1-9]-server.json"
     ],
     "boot_command": "<tab> linux text biosdevname=0 ks=cdrom:/{{ user `kickstart` }}<enter><enter>"
 }
