@@ -14,6 +14,6 @@
     "file_patterns": [
       "centos[1-9].json"
     ],
-    "boot_command": "<up><wait><tab> text ks=hd:fd0:/ks.cfg<enter>",
+    "boot_command": "<up><wait><tab> text ks=cdrom:/ks.cfg<enter>",
     "kickstart": "ks.cfg"
 }
