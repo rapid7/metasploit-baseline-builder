@@ -119,11 +119,11 @@ To execute the build process:
 ```
 docker run --rm=true --tty -u jenkins \
     --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
-    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
+    --workdir=/r7-source/metasploit-baseline-builder rapid7/build:payload-lab \
     bash -l -c "python build_baselines.py [options]"
 docker run --rm=true --tty -u jenkins \
     --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
-    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
+    --workdir=/r7-source/metasploit-baseline-builder rapid7/build:payload-lab \
     bash -l -c "python build_msf_host.py [options]"
 ```
 
