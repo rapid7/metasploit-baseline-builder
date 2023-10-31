@@ -14,7 +14,8 @@
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
       "guest_os_type": "{{user `guest_os_type`}}",
       "disk_size": 61440,
-      "floppy_files": [
+      "cd_label": "packer_cd",
+      "cd_files": [
         "{{user `autounattend`}}",
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
@@ -60,7 +61,8 @@
       "guest_os_type": "{{user `guest_os_type`}}",
       "disk_size": 61440,
       "vm_name": "{{user `vm_name`}}",
-      "floppy_files": [
+      "cd_label": "packer_cd",
+      "cd_files": [
         "{{user `autounattend`}}",
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
