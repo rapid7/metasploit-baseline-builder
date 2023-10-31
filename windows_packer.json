@@ -48,8 +48,7 @@
     {
       "type": "virtualbox-iso",
       "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
       "output_directory": "./tmp/{{user `vm_name`}}-virtualbox-iso",
       "headless": false,
       "boot_wait": "10m",
