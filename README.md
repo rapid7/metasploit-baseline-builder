@@ -9,6 +9,7 @@ Prior to usage of the utility provided here the following must be obtained or co
 * Packer (https://www.packer.io/)
 * Installation media for the desired operating systems.
 * Python >= 2.7.11
+* You may need to install the VMware plugin for Packer: `packer plugins install github.com/hashicorp/vmware`
 
 ## Installation
 ```
