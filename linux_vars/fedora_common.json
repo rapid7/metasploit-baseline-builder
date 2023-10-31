@@ -14,5 +14,5 @@
       "fedora[1-9][1-9].json",
       "fedora[1-9]*-server.json"
     ],
-    "boot_command": "<tab> linux text biosdevname=0 ks=hd:fd0:/{{ user `kickstart` }}<enter><enter>"
+    "boot_command": "<tab> linux text biosdevname=0 ks=cdrom:/{{ user `kickstart` }}<enter><enter>"
 }
