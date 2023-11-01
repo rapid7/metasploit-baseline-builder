@@ -26,6 +26,11 @@ git submodule init
 git submodule update
 ```
 
+You will also need to apply any patches present in `./patches`:
+```bash
+git apply ./patches/boxcutter_centos.patch
+git apply ./patches/boxcutter_ubuntu.patch
+```
 
 ### VMWare Fusion and Workstation
 ```
