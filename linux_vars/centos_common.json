@@ -5,7 +5,7 @@
     "sshd_script": "script/sshd.sh",
     "virtualbox_script": "script/virtualbox.sh",
     "parallels_script": "script/parallels.sh",
-    "vault_repositories_script": "script/vault_repositories.sh",
+    "vault_repositories_script": "../../scripts/centos_customs/vault_repositories.sh",
     "motd_script": "script/motd.sh",
     "custom_script":  "../../scripts/centos_customs/centos_setup.sh",
     "vmware_script":  "../../scripts/centos_customs/centos_vmware.sh",
