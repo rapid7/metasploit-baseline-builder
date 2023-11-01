@@ -40,6 +40,16 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
         packer_vars['iso_checksum'] = packer_vars['iso_checksum_type'] + ':' + packer_vars['iso_checksum']
         del packer_vars['iso_checksum_type']
 
+    # Check if there are some files in this repository that should override some of the Packer properties
+    # provided to this function
+    # Assume the path is: metasploit-baseline-builder/boxcutter/ubuntu, metasploit-baseline-builder/boxcutter/centos etc
+    distro = os.getcwd().split('/')[-1]
+    override_file = '../../linux_vars/' + distro + '/' + packer_var_source.name
+    if os.path.isfile(override_file):
+        with open(override_file) as override_source:
+            override_json = json.load(override_source)
+            packer_vars.update(override_json)
+
     packer_vars.update({
         "vm_name": prependString + vm_name,
         "output": os.path.join("..", "..", "box", output)
