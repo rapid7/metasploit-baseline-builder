@@ -1,0 +1,80 @@
+diff --git a/centos.json b/centos.json
+index 2d2da56..b291149 100644
+--- a/centos.json
++++ b/centos.json
+@@ -9,8 +9,7 @@
+       "guest_os_type": "{{ user `vmware_guest_os_type` }}",
+       "headless": "{{ user `headless` }}",
+       "http_directory": "{{ user `http_directory` }}",
+-      "iso_checksum": "{{ user `iso_checksum` }}",
+-      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
++      "iso_checksum": "{{ user `iso_checksum_type` }}:{{ user `iso_checksum` }}",
+       "iso_urls": [
+         "{{ user `iso_path` }}/{{ user `iso_name` }}",
+         "{{ user `iso_url` }}"
+@@ -40,8 +39,7 @@
+       "hard_drive_interface": "sata",
+       "headless": "{{ user `headless` }}",
+       "http_directory": "{{ user `http_directory` }}",
+-      "iso_checksum": "{{ user `iso_checksum` }}",
+-      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
++      "iso_checksum": "{{ user `iso_checksum_type` }}:{{ user `iso_checksum` }}",
+       "iso_urls": [
+         "{{ user `iso_path` }}/{{ user `iso_name` }}",
+         "{{ user `iso_url` }}"
+@@ -76,8 +74,7 @@
+       "disk_size": "{{ user `disk_size` }}",
+       "guest_os_type": "{{ user `parallels_guest_os_type` }}",
+       "http_directory": "{{ user `http_directory` }}",
+-      "iso_checksum": "{{ user `iso_checksum` }}",
+-      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
++      "iso_checksum": "{{ user `iso_checksum_type` }}:{{ user `iso_checksum` }}",
+       "iso_urls": [
+         "{{ user `iso_path` }}/{{ user `iso_name` }}",
+         "{{ user `iso_url` }}"
+@@ -150,6 +147,7 @@
+         "script/sshd.sh",
+         "script/vagrant.sh",
+         "script/desktop.sh",
++        "../../scripts/centos_customs/vault_repositories.sh",
+         "script/vmware.sh",
+         "script/virtualbox.sh",
+         "script/parallels.sh",
+diff --git a/script/cleanup.sh b/script/cleanup.sh
+index 1d48f2e..ecda3b9 100644
+--- a/script/cleanup.sh
++++ b/script/cleanup.sh
+@@ -47,33 +47,6 @@ rm -f /var/lib/rpm/__db*
+ # delete any logs that have built up during the install
+ find /var/log/ -name *.log -exec rm -f {} \;
+ 
+-echo '==> Clear out swap and disable until reboot'
+-set +e
+-swapuuid=$(/sbin/blkid -o value -l -s UUID -t TYPE=swap)
+-case "$?" in
+-	2|0) ;;
+-	*) exit 1 ;;
+-esac
+-set -e
+-if [ "x${swapuuid}" != "x" ]; then
+-    # Whiteout the swap partition to reduce box size
+-    # Swap is disabled till reboot
+-    swappart=$(readlink -f /dev/disk/by-uuid/$swapuuid)
+-    /sbin/swapoff "${swappart}"
+-    dd if=/dev/zero of="${swappart}" bs=1M || echo "dd exit code $? is suppressed"
+-    /sbin/mkswap -U "${swapuuid}" "${swappart}"
+-fi
+-
+-echo '==> Zeroing out empty area to save space in the final image'
+-# Zero out the free space to save space in the final image.  Contiguous
+-# zeroed space compresses down to nothing.
+-dd if=/dev/zero of=/EMPTY bs=1M || echo "dd exit code $? is suppressed"
+-rm -f /EMPTY
+-
+-# Block until the empty file has been removed, otherwise, Packer
+-# will try to kill the box while the disk is still full and that's bad
+-sync
+-
+ echo "==> Disk usage before cleanup"
+ echo "${DISK_USAGE_BEFORE_CLEANUP}"
+ 
