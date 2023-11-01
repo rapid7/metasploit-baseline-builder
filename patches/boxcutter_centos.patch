@@ -1,5 +1,5 @@
 diff --git a/centos.json b/centos.json
-index 2d2da56..b291149 100644
+index 2d2da56..01c683e 100644
 --- a/centos.json
 +++ b/centos.json
 @@ -9,8 +9,7 @@
@@ -32,14 +32,6 @@ index 2d2da56..b291149 100644
        "iso_urls": [
          "{{ user `iso_path` }}/{{ user `iso_name` }}",
          "{{ user `iso_url` }}"
-@@ -150,6 +147,7 @@
-         "script/sshd.sh",
-         "script/vagrant.sh",
-         "script/desktop.sh",
-+        "../../scripts/centos_customs/vault_repositories.sh",
-         "script/vmware.sh",
-         "script/virtualbox.sh",
-         "script/parallels.sh",
 diff --git a/script/cleanup.sh b/script/cleanup.sh
 index 1d48f2e..ecda3b9 100644
 --- a/script/cleanup.sh
