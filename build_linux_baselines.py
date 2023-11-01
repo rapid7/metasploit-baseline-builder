@@ -32,6 +32,14 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
     with open(os.path.join("", packer_var_file)) as packer_var_source:
         packer_vars = json.load(packer_var_source)
 
+    # Old Packer versions used a separate iso_checksum and iso_checksum_type keys.
+    # New Packer versions combine them together: "iso_checksum_type:iso_checksum"
+    # Let's implement a workaround for old Packer versions here rather than for each individual
+    # top-level Packer json template.
+    if 'iso_checksum_type' in packer_vars:
+        packer_vars['iso_checksum'] = packer_vars['iso_checksum_type'] + ':' + packer_vars['iso_checksum']
+        del packer_vars['iso_checksum_type']
+
     packer_vars.update({
         "vm_name": prependString + vm_name,
         "output": os.path.join("..", "..", "box", output)
