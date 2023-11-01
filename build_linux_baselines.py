@@ -149,7 +149,15 @@ def main(argv):
         "ubuntu2004-desktop.json"
     ]
 
+    skipped_dirs = {
+        'fedora': 'Not being used for sanity tests'
+    }
+
     for os_dir in os.listdir("."):
+        if os_dir in skipped_dirs.keys():
+            print "\n" + os_dir + ' is being skipped. Reason: ' + skipped_dirs[os_dir]
+            continue
+
         if os.path.isdir(os.path.join(".", os_dir)):
             common_var_file = os.path.join("..", "linux_vars", os_dir + "_common.json")
             with open(os.path.join("", common_var_file)) as common_var_source:
