@@ -30,14 +30,14 @@ else
   yum -y install python python-pip libyaml-devel
 fi
 
-yum clean && \
+yum clean all && \
 rm -r /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-  RUBY_VERSION='2.4.0'
-    su ${SSH_USERNAME} -c 'command curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
-  	  command curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - && \
-  	  curl -L -sSL https://get.rvm.io | bash -s stable'
-    su ${SSH_USERNAME} -c "/bin/bash -l -c 'rvm autolibs disable && \
-    	rvm install ${RUBY_VERSION} && \
-    	rvm ${RUBY_VERSION} do gem install bundler -v 1.17.3 && \
-      rvm cleanup all'"
+RUBY_VERSION='2.4.0'
+su ${SSH_USERNAME} -c 'command curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
+  command curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - && \
+  curl -L -sSL https://get.rvm.io | bash -s stable'
+su ${SSH_USERNAME} -c "/bin/bash -l -c 'rvm autolibs disable && \
+  rvm install ${RUBY_VERSION} && \
+  rvm ${RUBY_VERSION} do gem install bundler -v 1.17.3 && \
+  rvm cleanup all'"
