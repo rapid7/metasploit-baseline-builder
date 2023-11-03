@@ -16,7 +16,7 @@ apt-get update && \
 		libssl-dev libyaml-dev libsqlite3-dev \
 		sqlite3 autoconf libgmp-dev libgdbm-dev \
 		libncurses5-dev automake libtool pkg-config \
-		libffi-dev libpcap-dev nmap && \
+		libffi-dev libpcap-dev nmap libbz2-dev && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
