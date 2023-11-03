@@ -32,19 +32,18 @@ apt-get -y purge ppp pppconfig pppoeconf
 echo "==> Removing other oddities"
 apt-get -y purge popularity-contest installation-report landscape-common wireless-tools wpasupplicant ubuntu-serverguide
 
-# Clean up the apt cache
+echo "==> Clean up the apt cache"
 apt-get -y autoremove --purge
 apt-get -y autoclean
 apt-get -y clean
 
-# Clean up orphaned packages with deborphan
-add-apt-repository universe
+echo "==> Clean up orphaned packages with deborphan"
+apt-get update
 apt-get -y install deborphan
 while [ -n "$(deborphan --guess-all --libdevel)" ]; do
     deborphan --guess-all --libdevel | xargs apt-get -y purge
 done
 apt-get -y purge deborphan dialog
-add-apt-repository --remove universe
 
 echo "==> Removing man pages"
 rm -rf /usr/share/man/*
