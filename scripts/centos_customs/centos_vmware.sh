@@ -12,6 +12,12 @@ if grep -q -i "release 6" /etc/centos-release || grep -q -i "release 8" /etc/cen
   sudo sed -i -e "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-*
 fi
 
+if grep -q -i "release 8" /etc/centos-release ; then
+  echo "==> Updating libmodulemd"
+  # Stop libmodulemd from spamming `Module yaml error: Unexpected key in data: static_context [line 9 col 3]`
+  yum update -y libmodulemd 2>/dev/null
+fi
+
 function install_open_vm_tools {
     echo "==> Installing Open VM Tools"
     # Install open-vm-tools so we can mount shared folders
