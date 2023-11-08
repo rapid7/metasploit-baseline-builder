@@ -249,9 +249,9 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", in
             return p  # just return without exec since ret value is not checked anyways
 
     try:
-        p.build(parallel=True, debug=False, force=False)
+        p.build(parallel=False, debug=False, force=False)
     except sh.ErrorReturnCode:
-        print "Error: build of " + prependString + vm_name + " returned non-zero"
+        print("Error: build of " + prependString + vm_name + " returned non-zero")
         return p
 
     if vmServer.get_esxi() is not None:
@@ -271,16 +271,16 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv[1:], "c:fhn:p:r", ["esxiConfig=", "factory", "help", "numProcessors=", "prependString=", "replace"])
     except getopt.GetoptError:
-        print argv[0] + ' -n <numProcessors>'
+        print(argv[0] + ' -n <numProcessors>')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print argv[0] + " [options]"
-            print '-c <file>, --esxiConfig=<file>       use alternate hypervisor config file'
-            print '-f, --factory                        builds system without additional packages'
-            print '-n <int>, --numProcessors=<int>      execute <int> parallel builds'
-            print '-p <string>, --prependString=<file>  prepend string to the beginning of VM names'
-            print '-r, --replace                        replace existing baselines'
+            print(argv[0] + " [options]")
+            print('-c <file>, --esxiConfig=<file>       use alternate hypervisor config file')
+            print('-f, --factory                        builds system without additional packages')
+            print('-n <int>, --numProcessors=<int>      execute <int> parallel builds')
+            print('-p <string>, --prependString=<file>  prepend string to the beginning of VM names')
+            print('-r, --replace                        replace existing baselines')
             sys.exit()
         elif opt in ("-c", "--esxiConfig"):
             global esxi_file
@@ -303,11 +303,11 @@ def main(argv):
     try:
         vmServer = serverHelper(esxi_file)
         if replace_vms and vmServer.get_esxi() is not None:
-            print "removing baselines"
+            print("removing baselines")
             for file_name in tqdm(iso_map):
                 remove_baseline(vmServer, file_name, prependString)
 
-        print "generating baselines"
+        print("generating baselines")
         if num_processors > 1:
             pool = multiprocessing.Pool(num_processors)
 
