@@ -14,7 +14,7 @@ $isWin81 = wmic os get caption | find /i '" 8.1 "'
 $isWin2012 = wmic os get caption | find /i '" 2012 "'
 $isWin2012r2 = wmic os get caption | find /i '" 2012 R2"'
 
-if (!($isWin7 -or $isWin8 -or $isWin81 -or $isWin2012 -or $isWin2012)){
+if (!($isWin7 -or $isWin8 -or $isWin81 -or $isWin2008r2 -or $isWin2012 -or $isWin2012)){
   LogWrite "Skipping net45 install not required for OS"
   exit 0
 }
