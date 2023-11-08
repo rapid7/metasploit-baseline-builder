@@ -106,7 +106,8 @@
       ]
     },
     {
-      "type": "windows-restart"
+      "type": "windows-restart",
+      "pause_before": "180s"
     },
     {
       "type": "powershell",
