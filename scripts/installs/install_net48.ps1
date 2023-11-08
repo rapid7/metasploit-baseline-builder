@@ -16,7 +16,7 @@ try {
 
 LogWrite "Starting installation process..."
 try {
-    Start-Process -FilePath "C:\Windows\Temp\dotnet48.exe" -ArgumentList "/I /q /norestart" -Wait -PassThru
+    Start-Process -FilePath "C:\Windows\Temp\dotnet48.exe" -ArgumentList @("/I", "/q", "/norestart", "/log", "C:\Windows\Temp\dotnet-installer.log") -Wait -PassThru
 } catch {
     LogWrite $_.Exception | Format-List -force
     LogWrite "Exception during install process."
