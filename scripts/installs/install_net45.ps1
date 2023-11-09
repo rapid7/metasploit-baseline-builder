@@ -26,4 +26,4 @@ try {
     LogWrite $_.Exception | Format-List -force
     LogWrite "Exception during install process."
 }
-Restart-Computer -delay 15
+shutdown.exe /r /t 15

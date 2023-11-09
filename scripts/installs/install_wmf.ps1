@@ -70,3 +70,4 @@ schtasks /Run /TN $Taskname
 start-sleep -s 5
 schtasks /delete /tn $Taskname /f
 start-sleep -s 30
+shutdown.exe /r /t 30
