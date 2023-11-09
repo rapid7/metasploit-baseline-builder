@@ -12,10 +12,7 @@ Prior to usage of the utility provided here the following must be obtained or co
 
 ## Installation
 ```
-pip install cpe-utils
-pip install python-packer
-pip install tqdm
-pip install vm-automation
+python -m pip install -r requirements.txt
 ````
 
 ## Usage
