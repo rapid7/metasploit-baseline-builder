@@ -19,7 +19,6 @@
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
         "./scripts/installs/openssh.ps1",
-        "./scripts/installs/install_net48.ps1",
         "./resources/certs/oracle-cert.cer",
         "./resources/certs/gdig2.crt",
         "./resources/certs/comodorsadomainvalidationsecureserverca.crt",
@@ -64,7 +63,6 @@
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
         "./scripts/installs/openssh.ps1",
-        "./scripts/installs/install_net48.ps1",
         "./resources/certs/oracle-cert.cer",
         "./resources/certs/gdig2.crt",
         "./resources/certs/comodorsadomainvalidationsecureserverca.crt",
@@ -107,6 +105,16 @@
         "inline": ["cd {{user `scripts_dir`}}/pre_downloads/windows && powershell {{user `scripts_dir`}}/pre_downloads/windows/vmware-tools.ps1"]
     },
     {
+        "type": "shell-local",
+        "only_on": ["linux", "darwin"],
+        "inline": ["cd {{user `scripts_dir`}}/pre_downloads/windows && {{user `scripts_dir`}}/pre_downloads/windows/chocolatey-predownload.sh"]
+    },
+    {
+        "type": "shell-local",
+        "only_on": ["linux", "darwin"],
+        "inline": ["cd {{user `scripts_dir`}}/pre_downloads/windows && {{user `scripts_dir`}}/pre_downloads/windows/vagrant-ssh-key.sh"]
+    },
+    {
       "type": "file",
       "source": "scripts",
       "destination": "C:/vagrant",
@@ -133,6 +141,12 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "./scripts/configs/disable_firewall.bat"
+      ]
+    },
+    {
+      "type":"powershell",
+      "scripts": [
+        "./scripts/installs/install_net4x.ps1"
       ]
     },
     {
