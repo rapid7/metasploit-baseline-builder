@@ -69,26 +69,6 @@
         "md5": "99feb0f9e7262b7eefa460840a31b59d",
         "install_index": "1"
     },
-    "en_windows_7_professional_with_sp1_x64_dvd_u_676939.iso": 
-    {
-        "md5": "ed15956fe33c13642a6d2cb2c7aa9749",
-        "install_index": "3"
-    },
-    "en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso": 
-    {
-        "md5": "0bff99c8310ba12a9136e3d23606f3d4",
-        "install_index": "4"
-    },
-    "en_windows_7_professional_x64_dvd_x15-65805.iso": 
-    {
-        "md5": "7b7af5fe3a01e9fd76de4dacb45a796b",
-        "install_index": "3"
-    },
-    "en_windows_7_professional_x86_dvd_x15-65804.iso": 
-    {
-        "md5": "d8f675aaeb48057452666b0cd686d7f5",
-        "install_index": "4"
-    },
     "en_windows_8.1_with_update_x64_dvd_6051480.iso": 
     {
         "md5": "e0d4594e56c0545d379340e0db9519a5",
@@ -117,16 +97,6 @@
     "en_windows_8_x86_dvd_915417.iso": 
     {
         "md5": "4252407333706df89a0c654924dd3f06",
-        "install_index": "1"
-    },
-    "en_windows_server_2008_r2_with_sp1_x64_dvd_617601.iso": 
-    {
-        "md5": "8dcde01d0da526100869e2457aafb7ca",
-        "install_index": "1"
-    },
-    "en_windows_server_2008_r2_x64_dvd_x15-50365.iso": 
-    {
-        "md5": "0ffbae83327f0ad8c2ab4d5dfa754c09",
         "install_index": "1"
     },
     "en_windows_server_2012_r2_with_update_x64_dvd_6052708.iso": 
@@ -170,4 +140,3 @@
         "install_index": "1"
     }
 }
-

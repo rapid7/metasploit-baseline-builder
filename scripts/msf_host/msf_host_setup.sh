@@ -16,11 +16,11 @@ apt-get update && \
 		libssl-dev libyaml-dev libsqlite3-dev \
 		sqlite3 autoconf libgmp-dev libgdbm-dev \
 		libncurses5-dev automake libtool pkg-config \
-		libffi-dev libpcap-dev nmap && \
+		libffi-dev libpcap-dev nmap libbz2-dev && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+echo "deb http://apt-archive.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
 	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
         apt-get update && \
         apt-get upgrade

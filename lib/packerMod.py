@@ -32,7 +32,8 @@ class packerMod:
                     "boot_command": [
                         template['boot_command']
                     ],
-                    "floppy_files": [
+                    "cd_label": "packer_cd",
+                    "cd_files": [
                         '{{ user `http_directory` }}/{{ user `kickstart` }}'
                     ]
                 })

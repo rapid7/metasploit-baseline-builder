@@ -18,26 +18,25 @@ RUN apt-get update && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN curl -L https://releases.hashicorp.com/packer/1.2.4/packer_1.2.4_linux_amd64.zip > /root/packer_1.2.4_linux_amd64.zip && \
+RUN curl -L https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip > /root/packer_1.9.4_linux_amd64.zip && \
 	cd /usr/local/bin && \
-	unzip ~/packer_1.2.4_linux_amd64.zip
+	unzip ~/packer_1.9.4_linux_amd64.zip
 
 ENV JENKINS_HOME /var/jenkins_home
 RUN useradd -d "$JENKINS_HOME" -u 1001 -m -s /bin/bash jenkins
 
 # TODO: this needs to run as jenkins user
 RUN su jenkins -c "curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash" 
-RUN echo 'export PATH="/var/jenkins_home/.pyenv/bin:$PATH"' >> /var/jenkins_home/.bash_profile
+RUN echo 'export PATH="/var/jenkins_home/.pyenv/bin:$PATH"' >> $JENKINS_HOME/.bash_profile
 RUN echo 'eval "$(pyenv init -)"' >> $JENKINS_HOME/.bash_profile
-RUN echo 'export PATH="/var/jenkins_home/.pyenv/shims:$PATH"' >> /var/jenkins_home/.bash_profile
+RUN echo 'export PATH="/var/jenkins_home/.pyenv/shims:$PATH"' >> $JENKINS_HOME/.bash_profile
 RUN echo 'eval "$(pyenv virtualenv-init -)"' >> $JENKINS_HOME/.bash_profile
+
+COPY requirements.txt $JENKINS_HOME/requirements.txt
 
 RUN su jenkins -c "/bin/bash -l -c '\
   pyenv install 2.7.13 && pyenv global 2.7.13 && \
-  python -m pip install --upgrade cpe-utils && \
-  python -m pip install --upgrade pyvmomi && \
-  python -m pip install --upgrade vm-automation && \
-  python -m pip install --upgrade tqdm'"
+  python -m pip install -r $JENKINS_HOME/requirements.txt'"
 
 VOLUME "$JENKINS_HOME"
 RUN chown -R jenkins "$JENKINS_HOME"

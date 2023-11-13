@@ -249,7 +249,7 @@ def build_base(iso, md5, replace_existing, vmServer=None, prependString = "", in
             return p  # just return without exec since ret value is not checked anyways
 
     try:
-        p.build(parallel=True, debug=False, force=False)
+        p.build(parallel=False,debug=False, force=False)
     except sh.ErrorReturnCode:
         print "Error: build of " + prependString + vm_name + " returned non-zero"
         return p

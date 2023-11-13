@@ -9,13 +9,11 @@ Prior to usage of the utility provided here the following must be obtained or co
 * Packer (https://www.packer.io/)
 * Installation media for the desired operating systems.
 * Python >= 2.7.11
+* You may need to install the VMware plugin for Packer: `packer plugins install github.com/hashicorp/vmware`
 
 ## Installation
 ```
-pip install cpe-utils
-pip install python-packer
-pip install tqdm
-pip install vm-automation
+pip install -r requirements.txt
 ````
 
 ## Usage
@@ -28,6 +26,11 @@ git submodule init
 git submodule update
 ```
 
+You will also need to apply any patches present in `./patches`:
+```bash
+git apply ./patches/boxcutter_centos.patch
+git apply ./patches/boxcutter_ubuntu.patch
+```
 
 ### VMWare Fusion and Workstation
 ```
@@ -111,22 +114,20 @@ python build_msf_host.py [options]
 ```
 
 ## Docker Environment
-Create a local user `jenkins` with UID=1001
-
+From the root directory:
 ```
-cd docker
-docker build -t rapid7/build:payload-lab .
+docker build -t rapid7/build:payload-lab -f docker/Dockerfile .
 ```
 
 To execute the build process:
 ```
 docker run --rm=true --tty -u jenkins \
     --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
-    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
+    --workdir=/r7-source/metasploit-baseline-builder rapid7/build:payload-lab \
     bash -l -c "python build_baselines.py [options]"
 docker run --rm=true --tty -u jenkins \
     --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
-    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
+    --workdir=/r7-source/metasploit-baseline-builder rapid7/build:payload-lab \
     bash -l -c "python build_msf_host.py [options]"
 ```
 

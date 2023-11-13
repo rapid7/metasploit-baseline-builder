@@ -32,6 +32,17 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
     with open(os.path.join("", packer_var_file)) as packer_var_source:
         packer_vars = json.load(packer_var_source)
 
+    # Check if there are some files in this repository that should override some of the Packer properties
+    # provided to this function
+    # Assume the path is: metasploit-baseline-builder/boxcutter/ubuntu, metasploit-baseline-builder/boxcutter/centos etc
+    _boxcutter_path, distro = os.path.split(os.getcwdu())
+    override_file_relative = os.path.join('..', '..', 'linux_vars', distro, packer_var_source.name)
+    override_file = os.path.abspath(override_file_relative)
+    if os.path.isfile(override_file):
+        with open(override_file) as override_source:
+            override_json = json.load(override_source)
+            packer_vars.update(override_json)
+
     packer_vars.update({
         "vm_name": prependString + vm_name,
         "output": os.path.join("..", "..", "box", output)
@@ -74,7 +85,7 @@ def build_base(packer_var_file, common_vars, packerfile, replace_existing, vmSer
             return p  # just return without exec since ret value is not checked anyways
 
     try:
-        p.build(parallel=True, debug=False, force=False)
+        p.build(parallel=False, debug=False, force=False)
     except sh.ErrorReturnCode:
         print "Error: build of " + prependString + vm_name + " returned non-zero"
         return p
@@ -120,14 +131,32 @@ def main(argv):
 
     os.chdir("boxcutter")
 
+    legacy_installers = [
+        "ubuntu1404.json",
+        "ubuntu1404-desktop.json",
+        "ubuntu1604.json",
+        "ubuntu1604-desktop.json",
+        "ubuntu1804.json",
+        "ubuntu1804-desktop.json",
+        "ubuntu2004.json",
+        "ubuntu2004-desktop.json"
+    ]
+
+    skipped_dirs = {
+        'fedora': 'Not being used for sanity tests'
+    }
+
     for os_dir in os.listdir("."):
+        if os_dir in skipped_dirs.keys():
+            print "\n" + os_dir + ' is being skipped. Reason: ' + skipped_dirs[os_dir]
+            continue
+
         if os.path.isdir(os.path.join(".", os_dir)):
             common_var_file = os.path.join("..", "linux_vars", os_dir + "_common.json")
             with open(os.path.join("", common_var_file)) as common_var_source:
                 common_vars = json.load(common_var_source)
 
             os.chdir(os.path.join("", os_dir))
-            packer_file = os_dir + ".json"
 
             targets = []
             for pattern in common_vars['file_patterns']:
@@ -135,6 +164,11 @@ def main(argv):
 
             print "\nBuilding " + str(len(targets)) + " " + os_dir.capitalize() + " baselines:"
             for target in tqdm(targets):
+                if target in legacy_installers:
+                    packer_file = os_dir + "-legacy.json"
+                else:
+                    packer_file = os_dir + ".json"
+
                 build_base(target, common_vars, packer_file, replace_existing=replace_vms, vmServer=vm_server, prependString=prependString, factory_image=factory_image)
 
             os.chdir("../")
