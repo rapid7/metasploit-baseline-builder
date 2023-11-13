@@ -1,58 +1,24 @@
-function Invoke-CLR4PowerShellCommand {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [ScriptBlock]
-        $ScriptBlock,
-        
-        [Parameter(ValueFromRemainingArguments=$true)]
-        [Alias('Args')]
-        [object[]]
-        $ArgumentList
-    )
-    
-    if ($PSVersionTable.CLRVersion.Major -eq 4) {
-        Invoke-Command -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
-        return
-    }
-
-    $RunActivationConfigPath = $Env:TEMP | Join-Path -ChildPath ([Guid]::NewGuid())
-    New-Item -Path $RunActivationConfigPath -ItemType Container | Out-Null
-@"
-<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <startup useLegacyV2RuntimeActivationPolicy="true">
-    <supportedRuntime version="v4.0"/>
-  </startup>
-</configuration>
-"@ | Set-Content -Path $RunActivationConfigPath\powershell.exe.activation_config -Encoding UTF8
-
-    $EnvVarName = 'COMPLUS_ApplicationMigrationRuntimeActivationConfigPath'
-    $EnvVarOld = [Environment]::GetEnvironmentVariable($EnvVarName)
-    [Environment]::SetEnvironmentVariable($EnvVarName, $RunActivationConfigPath)
-
-    try {
-        & powershell.exe -inputformat text -command $ScriptBlock -args $ArgumentList
-    } finally {
-        [Environment]::SetEnvironmentVariable($EnvVarName, $EnvVarOld)
-        $RunActivationConfigPath | Remove-Item -Recurse
-    }
-
-}
-
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
+$isWin7 = wmic os get caption | find /i '" 7 "'
 $isWin8 = wmic os get caption | find /i '" 8 "'
+$isWinServer2008 = wmic os get caption | find /i '" 2008 "'
+$isWin10_1511 = wmic os get version | find /i '"10.0.10586"'
 $isWin2012 = wmic os get caption | find /i '" 2012 "'
 
-# skip wrapping for 8 or 2012?
-if ($isWin8 -or $isWin2012){
-   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
-}else{
-    Invoke-CLR4PowerShellCommand -ScriptBlock {
-       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
-    }
+$skip_wrapping = $isWin8 -or $isWin2012
+
+# These versions support up to and including dotNet 4.6
+# That also means that their installed Chocolatey version is limited to 1.4.0 and below.
+$needs_older_versions=$isWin7 -or $isWin8 -or $isWin10_1511 -or $isWinServer2008
+
+if($needs_older_versions) {
+    Start-Process -FilePath 'powershell.exe' -ArgumentList @('C:\vagrant\resources\pre_downloads\windows\install.ps1', '-ChocolateyDownloadUrl', 'C:\vagrant\resources\pre_downloads\windows\chocolatey.1.4.0.nupkg', '-UseNativeUnzip') -Wait -PassThru
+} else {
+    Start-Process -FilePath 'powershell.exe' -ArgumentList @('C:\vagrant\resources\pre_downloads\windows\install.ps1') -Wait -PassThru
 }
+
+Write-Host "Installing Chocolatey finished"
 
 # cribbed from https://gist.github.com/jstangroome/882528
