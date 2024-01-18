@@ -6,4 +6,4 @@
 /esxi_config.json
 /*.log
 /helpers/*.log
-resources/windows_pre_downloads/
+resources/pre_downloads/

@@ -21,7 +21,7 @@ if (!($isWin7 -or $isWin8 -or $isWin81 -or $isWin2008r2 -or $isWin2012 -or $isWi
 
 LogWrite "Starting installation process..."
 try {
-    Start-Process -FilePath "C:\vagrant\resources\windows_pre_downloads\dotnet.exe" -ArgumentList "/I /q /norestart" -Wait -PassThru
+    Start-Process -FilePath "C:\vagrant\resources\pre_downloads\windows\dotnet.exe" -ArgumentList "/I /q /norestart" -Wait -PassThru
 } catch {
     LogWrite $_.Exception | Format-List -force
     LogWrite "Exception during install process."

@@ -22,7 +22,7 @@ if (!($isWin7 -or $isWin8 -or $isWin81 -or $isWin2008r2 -or $isWin2012 -or $isWi
 
 LogWrite "Extracting Archive..."
 
-$filesLocation = "C:\vagrant\resources\windows_pre_downloads"
+$filesLocation = "C:\vagrant\resources\pre_downloads/windows"
 $extractLocation = ${filesLocation} + "\wmf_install"
 New-Item -Path $extractLocation -ItemType Directory
 
@@ -60,12 +60,12 @@ if ($isWin7 -or $isWin2008r2){
 
 LogWrite "Starting installation process..."
 
-New-Item C:\vagrant\resources\windows_pre_downloads\wmf_install\install_wmf.bat -ItemType "file"
-Set-Content C:\vagrant\resources\windows_pre_downloads\wmf_install\install_wmf.bat $installCmd
+New-Item C:\vagrant\resources\pre_downloads\windows\wmf_install\install_wmf.bat -ItemType "file"
+Set-Content C:\vagrant\resources\pre_downloads\windows\wmf_install\install_wmf.bat $installCmd
 
 $Taskname = "updatepsh"
 
-SCHTASKS /CREATE /sc ONCE /st 00:00 /TN $Taskname /RU SYSTEM /RL HIGHEST /TR "C:\vagrant\resources\windows_pre_downloads\wmf_install\install_wmf.bat"
+SCHTASKS /CREATE /sc ONCE /st 00:00 /TN $Taskname /RU SYSTEM /RL HIGHEST /TR "C:\vagrant\resources\pre_downloads\windows\wmf_install\install_wmf.bat"
 schtasks /Run /TN $Taskname
 start-sleep -s 5
 schtasks /delete /tn $Taskname /f
