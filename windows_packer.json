@@ -72,12 +72,12 @@
     {
         "type": "shell-local",
         "only_on": ["linux", "darwin"],
-        "inline": ["cd resources && ./download-windows-files.sh"]
+        "inline": ["cd scripts/pre_downloads/windows && ./download-files.sh"]
     },
     {
         "type": "shell-local",
         "only_on": ["windows"],
-        "inline": ["cd resources && powershell ./download-windows-files.ps1"]
+        "inline": ["cd scripts/pre_downloads/windows && powershell ./download-files.ps1"]
     },
     {
       "type": "file",
@@ -141,7 +141,7 @@
       "scripts": [
         "scripts/configs/disable-auto-logon.bat",
         "scripts/chocolatey_installs/chocolatey-compatibility.bat",
-        "scripts/installs/install_boxstarter.bat",
+        "scripts/chocolatey_installs/boxstarter.bat",
         "scripts/chocolatey_installs/7zip.bat",
         "scripts/configs/apply_password_settings.bat",
         "scripts/configs/create_users.bat",

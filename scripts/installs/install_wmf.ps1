@@ -22,12 +22,12 @@ if (!($isWin7 -or $isWin8 -or $isWin81 -or $isWin2008r2 -or $isWin2012 -or $isWi
 
 LogWrite "Extracting Archive..."
 
-$filesLocation = "C:\vagrant\resources\pre_downloads/windows"
+$filesLocation = "C:\vagrant\resources\pre_downloads\windows"
 $extractLocation = ${filesLocation} + "\wmf_install"
 New-Item -Path $extractLocation -ItemType Directory
 
 $shell = New-Object -ComObject shell.application
-if (is_64bit) {
+if ($is_64bit) {
   $zip = $shell.NameSpace(${filesLocation} + "\Win7AndW2K8R2-KB3191566-x64.zip")
 } else {
   $zip = $shell.NameSpace(${filesLocation} + "\Win7-KB3191566-x86.zip")

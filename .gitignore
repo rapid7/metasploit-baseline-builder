@@ -6,4 +6,5 @@
 /esxi_config.json
 /*.log
 /helpers/*.log
+/lib/*.pyc
 resources/pre_downloads/
