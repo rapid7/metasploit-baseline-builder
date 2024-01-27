@@ -22,7 +22,7 @@ if (!($isWin7 -or $isWin8 -or $isWin81 -or $isWin2008r2 -or $isWin2012 -or $isWi
 $installFile = "C:\vagrant\resources\pre_downloads\windows\NDP452-KB2901907-x86-x64-AllOS-ENU.exe"
 LogWrite "Starting installation process..."
 try {
-    if($isWin2008r2 -and !$isSp1){
+    if(($isWin7 -or $isWin2008r2) -and !$isSp1){
       # Win2008r2 core hangs on defualt install, since background task adds delay only used when required
       $installCmd = "powershell.exe -ExecutionPolicy Bypass -Command " + '"' + ${installFile} + " /I /q /norestart" + '"'
       New-Item C:\Windows\Temp\install_dotnet.bat -ItemType "file"
