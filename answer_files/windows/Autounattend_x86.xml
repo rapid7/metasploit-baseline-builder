@@ -262,11 +262,6 @@
                     <Order>26</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\install_net45.ps1 -AutoStart</CommandLine>
-                    <Description>Install .NET 4.0</Description>
-                    <Order>27</Order>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
                     <CommandLine>reg add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff</CommandLine>
                     <Description>Disable the network discovery prompt window</Description>
                     <Order>28</Order>

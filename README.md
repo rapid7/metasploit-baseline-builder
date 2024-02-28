@@ -6,16 +6,14 @@ This project provides baseline virtual machines for creation of testing environm
 Prior to usage of the utility provided here the following must be obtained or configured:
 
 * A virtualization platform (i.e. VMWare Fusion, VMWare Workstation, VirtualBox)
-* Packer (https://www.packer.io/)
+* Packer (https://www.packer.io/) version >= 1.9.4
 * Installation media for the desired operating systems.
 * Python >= 2.7.11
+* You may need to install the VMware plugin for Packer: `packer plugins install github.com/hashicorp/vmware`
 
 ## Installation
 ```
-pip install cpe-utils
-pip install python-packer
-pip install tqdm
-pip install vm-automation
+python -m pip install -r requirements.txt
 ````
 
 ## Usage
@@ -67,43 +65,6 @@ esxcli system settings advanced set -o /Net/GuestIPHack -i 1
 
 This allows Packer to infer the guest IP from ESXi, without the VM needing to report it itself.
 
-##### Open VNC Ports on the Firewall
-
-Packer connects to the VM using VNC, so open a range of ports to allow it to connect to it.
-
-First, ensure you can edit the firewall configuration:
-
-```
-chmod 644 /etc/vmware/firewall/service.xml
-chmod +t /etc/vmware/firewall/service.xml
-```
-
-Then append the range we want to open to the end of the file:
-
-```
-<service id="1000">
-  <id>packer-vnc</id>
-  <rule id="0000">
-    <direction>inbound</direction>
-    <protocol>tcp</protocol>
-    <porttype>dst</porttype>
-    <port>
-      <begin>5900</begin>
-      <end>6000</end>
-    </port>
-  </rule>
-  <enabled>true</enabled>
-  <required>true</required>
-</service>
-```
-
-Finally, restore the permissions and reload the firewall:
-
-```
-chmod 444 /etc/vmware/firewall/service.xml
-esxcli network firewall refresh
-```
-
 ##### Execute the build
 ```
 python build_baselines.py [options]
@@ -114,19 +75,18 @@ python build_msf_host.py [options]
 Create a local user `jenkins` with UID=1001
 
 ```
-cd docker
-docker build -t rapid7/build:payload-lab .
+docker build -t rapid7/build:payload-lab -f docker/Dockerfile
 ```
 
 To execute the build process:
 ```
 docker run --rm=true --tty -u jenkins \
     --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
-    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
+    --workdir=/r7-source/metasploit-baseline-builder rapid7/build:payload-lab \
     bash -l -c "python build_baselines.py [options]"
 docker run --rm=true --tty -u jenkins \
     --volume=${FULL_PATH_TO_WORKING_DIR}:/r7-source \
-    --workdir=/r7-source/metasploit-baseline-bulder rapid7/build:payload-lab \
+    --workdir=/r7-source/metasploit-baseline-builder rapid7/build:payload-lab \
     bash -l -c "python build_msf_host.py [options]"
 ```
 

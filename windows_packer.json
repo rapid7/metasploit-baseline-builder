@@ -2,8 +2,9 @@
   "builders": [
     {
       "type": "vmware-iso",
+      "vnc_over_websocket": true,
+      "insecure_connection": true,
       "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "output_directory": "./tmp/{{user `vm_name`}}-vmware-iso",
       "headless": false,
@@ -19,21 +20,7 @@
         "{{user `autounattend`}}",
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
-        "./scripts/installs/openssh.ps1",
-        "./scripts/installs/install_net45.ps1",
-        "./resources/certs/oracle-cert.cer",
-        "./resources/certs/gdig2.crt",
-        "./resources/certs/comodorsadomainvalidationsecureserverca.crt",
-        "./resources/certs/comodorsacertificationauthority.crt",
-        "./resources/certs/addtrust_external_ca.cer",
-        "./resources/certs/baltimore_ca.cer",
-        "./resources/certs/digicert.cer",
-        "./resources/certs/equifax.cer",
-        "./resources/certs/globalsign.cer",
-        "./resources/certs/gte_cybertrust.cer",
-        "./resources/certs/microsoft_root_2011.cer",
-        "./resources/certs/thawte_primary_root.cer",
-        "./resources/certs/utn-userfirst.cer"
+        "./scripts/installs/openssh.ps1"
       ],
       "vm_name": "{{user `vm_name`}}",
       "vmx_data": {
@@ -48,7 +35,6 @@
     {
       "type": "virtualbox-iso",
       "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "output_directory": "./tmp/{{user `vm_name`}}-virtualbox-iso",
       "headless": false,
@@ -65,22 +51,7 @@
         "{{user `autounattend`}}",
         "./scripts/configs/microsoft-updates.bat",
         "./scripts/configs/win-updates.ps1",
-        "./scripts/installs/openssh.ps1",
-        "./scripts/installs/install_net45.ps1",
-        "./resources/certs/oracle-cert.cer",
-        "./resources/certs/gdig2.crt",
-        "./resources/certs/comodorsadomainvalidationsecureserverca.crt",
-        "./resources/certs/comodorsacertificationauthority.crt",
-        "./resources/certs/addtrust_external_ca.cer",
-        "./resources/certs/baltimore_ca.cer",
-        "./resources/certs/digicert.cer",
-        "./resources/certs/equifax.cer",
-        "./resources/certs/globalsign.cer",
-        "./resources/certs/gte_cybertrust.cer",
-        "./resources/certs/microsoft_root_2011.cer",
-        "./resources/certs/thawte_primary_root.cer",
-        "./resources/certs/utn-userfirst.cer"
-      ],
+        "./scripts/installs/openssh.ps1"      ],
       "vboxmanage": [
         [
           "modifyvm",
@@ -99,6 +70,16 @@
   ],
 "provisioners": [
     {
+        "type": "shell-local",
+        "only_on": ["linux", "darwin"],
+        "inline": ["cd scripts/pre_downloads/windows && ./download-files.sh"]
+    },
+    {
+        "type": "shell-local",
+        "only_on": ["windows"],
+        "inline": ["cd scripts/pre_downloads/windows && powershell ./download-files.ps1"]
+    },
+    {
       "type": "file",
       "source": "scripts",
       "destination": "C:/vagrant",
@@ -115,12 +96,25 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "./scripts/configs/update_root_certs.bat",
-        "./scripts/configs/disable-auto-logon.bat",
         "./scripts/configs/enable-rdp.bat"
       ]
     },
     {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/installs/install_net45.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "pause_before": "180s",
+      "scripts": [
+        "./scripts/installs/install_wmf.ps1"
+      ]
+    },
+    {
       "type": "windows-shell",
+      "pause_before": "180s",
       "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
@@ -145,7 +139,9 @@
       "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
-        "scripts/installs/install_boxstarter.bat",
+        "scripts/configs/disable-auto-logon.bat",
+        "scripts/chocolatey_installs/chocolatey-compatibility.bat",
+        "scripts/chocolatey_installs/boxstarter.bat",
         "scripts/chocolatey_installs/7zip.bat",
         "scripts/configs/apply_password_settings.bat",
         "scripts/configs/create_users.bat",
@@ -161,7 +157,7 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/chocolatey_installs/java.bat",
-        "scripts/installs/install_ruby.bat"
+        "scripts/chocolatey_installs/ruby.bat"
       ]
     },
     {
