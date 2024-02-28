@@ -34,7 +34,7 @@ RUN echo 'eval "$(pyenv virtualenv-init -)"' >> $JENKINS_HOME/.bash_profile
 COPY --chown=jenkins:jenkins requirements.txt $JENKINS_HOME/
 
 RUN su jenkins -c "/bin/bash -l -c '\
-  pyenv install 2.7.15 && pyenv global 2.7.15 && \
+  pyenv install 2.7.13 && pyenv global 2.7.13 && \
   python -m pip install -r $JENKINS_HOME/requirements.txt'"
 
 VOLUME "$JENKINS_HOME"
